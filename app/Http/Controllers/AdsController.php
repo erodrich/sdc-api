@@ -18,9 +18,7 @@ class AdsController extends Controller
     {
         $beacon = Beacon::where("hw_id", $id)->first();
 
-        $ad = $beacon->ad()->get()->first();;
-        //return new LocationResource($location);
-        //return LocationResource::collection($locations);
+        $ad = $beacon->ad()->get()->first();
         return new AdResource($ad);
     }
 }

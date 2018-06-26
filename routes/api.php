@@ -18,9 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //Route::get('ads','LocationController@index');
-Route::get('getad/{id}', 'AdsController@getAd');
+Route::get('getad/{id}', 'AdController@getAd');
 //Beacon API routes
 Route::apiResource('beacons', 'BeaconController');
+Route::apiResource('ads', 'AdController');
 //Route::post('ad','LocationController@store');
 
 /*

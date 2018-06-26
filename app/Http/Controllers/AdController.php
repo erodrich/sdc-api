@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Ad;
 use App\Beacon;
-use App\Http\Resources\Beacon as BeaconResource;
+use App\Http\Resources\Ad as AdResource;
 
-class BeaconController extends Controller
+class AdController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,9 +17,6 @@ class BeaconController extends Controller
     public function index()
     {
         //
-        $beacons = Beacon::all();
-        return new BeaconResource($beacons);
-
     }
 
     /**
@@ -64,5 +62,19 @@ class BeaconController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+        //
+    /**
+     * Display the specified resource.
+     * @param  String  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getAd($id)
+    {
+        $beacon = Beacon::where("hw_id", $id)->first();
+
+        $ad = $beacon->ad()->get()->first();
+        return new AdResource($ad);
     }
 }

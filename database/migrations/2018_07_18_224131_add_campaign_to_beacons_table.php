@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-class AddAdIdToBeaconTable extends Migration
+class AddCampaignToBeaconsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,8 +15,9 @@ class AddAdIdToBeaconTable extends Migration
     {
         Schema::table('beacons', function (Blueprint $table) {
             //
-            $table->unsignedBigInteger('ad_id');
-            $table->foreign('ad_id')->references('id')->on('ads');
+            $table->unsignedBigInteger('campaign_id');
+        
+            $table->foreign('campaign_id')->references('id')->on('campaigns');
         });
     }
 
@@ -29,6 +30,7 @@ class AddAdIdToBeaconTable extends Migration
     {
         Schema::table('beacons', function (Blueprint $table) {
             //
+            $table->dropForeign(['campaign_id']);
         });
     }
 }

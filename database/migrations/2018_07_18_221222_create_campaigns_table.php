@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBeaconsTable extends Migration
+class CreateCampaignsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateBeaconsTable extends Migration
      */
     public function up()
     {
-        Schema::create('beacons', function (Blueprint $table) {
+        Schema::create('campaigns', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('hw_id', 32)->unique();
-            $table->string('alias');
-            $table->string('ubicacion');
+            $table->string('name');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->boolean('active');
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateBeaconsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('beacons');
+        Schema::dropIfExists('campaigns');
     }
 }

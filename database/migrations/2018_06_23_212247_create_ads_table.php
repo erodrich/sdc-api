@@ -16,11 +16,11 @@ class CreateAdsTable extends Migration
         Schema::create('ads', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
-            $table->string('subtitle');
-            $table->string('image_full_name');
-            $table->string('image_pre_name');
-            $table->string('image_full_url');
-            $table->string('image_pre_url');
+            $table->string('subtitle')->nullable();
+            $table->string('image_full_name')->nullable();
+            $table->string('image_pre_name')->nullable();
+            $table->string('image_full_url')->nullable();
+            $table->string('image_pre_url')->nullable();
             $table->timestamps();
         });
     }

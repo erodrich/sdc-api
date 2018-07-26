@@ -15,7 +15,7 @@ class AddCampaignToBeaconsTable extends Migration
     {
         Schema::table('beacons', function (Blueprint $table) {
             //
-            $table->unsignedBigInteger('campaign_id');
+            $table->unsignedBigInteger('campaign_id')->nullable();
         
             $table->foreign('campaign_id')->references('id')->on('campaigns');
         });

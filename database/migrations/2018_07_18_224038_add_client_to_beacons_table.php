@@ -15,7 +15,7 @@ class AddClientToBeaconsTable extends Migration
     {
         Schema::table('beacons', function (Blueprint $table) {
             //
-            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('client_id')->nullable();
         
             $table->foreign('client_id')->references('id')->on('clients');
         });

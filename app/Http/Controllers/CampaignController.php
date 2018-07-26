@@ -17,8 +17,9 @@ class CampaignController extends Controller
     public function index(Client $client)
     {
         //
-        $campaigns = Campaign::where('client_id', '=', $client->id)->get();
-        return CampaignResource::collection($campaigns);
+        //$campaigns = Campaign::where('client_id', '=', $client->id)->get();
+        $campaigns = $client->campaigns()->get();
+		return CampaignResource::collection($campaigns);
 
     }
 
@@ -28,9 +29,19 @@ class CampaignController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Client $client, Request $request)
     {
         //
+		$campaign = new Campaign;
+		$campaign->name = $request->input('name');
+		$campaign->start_date = $request->input('start_date');
+		$campaign->end_date = $request->input('end_date');
+		$campaign->active = $request->input('active');
+
+		if($client->campaigns()->save($campaign)){
+			return new CampaignResource($campaign->fresh());
+		}
+		
     }
 
     /**
@@ -39,9 +50,14 @@ class CampaignController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Client $client, $id)
     {
         //
+		$campaign = Campaign::findOrFail($id);
+		if($campaign->client_id == $client->id){
+			return new CampaignResource($campaign);
+		}
+		return response()->json(['error'=>'Resource not found'], 404);
     }
 
     /**
@@ -51,9 +67,18 @@ class CampaignController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Client $client, Request $request, $id)
     {
         //
+		$campaign = Campaign::findOrFail($id);
+		$campaign->name = $request->input('name');
+		$campaign->start_date = $request->input('start_date');
+		$campaign->end_date = $request->input('end_date');
+		$campaign->active = $request->input('active');
+
+		if($client->campaigns()->save($campaign)){
+			return new CampaignResource($campaign->fresh());
+		}
     }
 
     /**
@@ -65,5 +90,8 @@ class CampaignController extends Controller
     public function destroy($id)
     {
         //
+		$campaign = Campaign::findOrFail($id);
+		$campaign->delete();
+		return response()->json('No existe el elemento', 204);
     }
 }

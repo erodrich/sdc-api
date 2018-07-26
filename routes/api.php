@@ -24,6 +24,12 @@ Route::prefix('clients/{client}')->group(function (){
 	Route::apiResource('campaigns', 'CampaignController');
 });
 
+Route::prefix('clients/{client}/campaigns/{campaign}')->group(function (){
+	Route::apiResource('ads','AdController');
+});
+
+
+
 
 //Route::get('ads','LocationController@index');
 //Route::get('getad/{id}', 'AdController@getAd');

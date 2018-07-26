@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Ad;
 use App\Beacon;
 use App\Http\Resources\Ad as AdResource;
+use Illuminate\Http\Request;
 
 class AdController extends Controller
 {
@@ -17,6 +17,9 @@ class AdController extends Controller
     public function index()
     {
         //
+        $ads = Ad::all();
+        return AdResource::collection($ads);
+
     }
 
     /**
@@ -64,7 +67,7 @@ class AdController extends Controller
         //
     }
 
-        //
+    //
     /**
      * Display the specified resource.
      * @param  String  $id

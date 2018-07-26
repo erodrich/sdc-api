@@ -33,11 +33,12 @@ Route::get('beacons/{id}', 'BeaconsController@show');
 -Actualizar $beacon
 Route::put('beacons/{id}', 'BeaconsController@show');
 -Añadir $beacon
+*/
 
-Ads
--Mostrar todos
--Mostrar $id
--Actualizar $ad
--Añadir $ad
+//Ads
+//-Mostrar todos
+//-Mostrar $id
+//-Actualizar $ad
+//-Añadir $ad
 
- */
+

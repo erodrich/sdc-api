@@ -11,4 +11,10 @@ class Campaign extends Model
 	{
 		return $this->hasMany('App\Ad');
 	}
+
+	public function beacons()
+	{
+		return $this->hasMany('App\Beacon');
+	}
+	
 }

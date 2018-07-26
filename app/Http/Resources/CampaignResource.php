@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Beacon extends JsonResource
+class CampaignResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,4 +17,3 @@ class Beacon extends JsonResource
         return parent::toArray($request);
     }
 }
-

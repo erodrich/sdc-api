@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Ad;
-use App\Beacon;
-use App\Http\Resources\Ad as AdResource;
 use Illuminate\Http\Request;
+use App\Client;
+use App\Http\Resources\ClientResource;
 
-class AdController extends Controller
+class ClientController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +16,8 @@ class AdController extends Controller
     public function index()
     {
         //
-        $ads = Ad::all();
-        return AdResource::collection($ads);
-
+        $clients = Client::with('campaigns')->get();
+        return ClientResource::collection($clients);
     }
 
     /**
@@ -42,6 +40,7 @@ class AdController extends Controller
     public function show($id)
     {
         //
+        return Client::find($id);
     }
 
     /**
@@ -65,19 +64,5 @@ class AdController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    //
-    /**
-     * Display the specified resource.
-     * @param  String  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function getAd($id)
-    {
-        $beacon = Beacon::where("hw_id", $id)->first();
-
-        $ad = $beacon->ad()->get()->first();
-        return new AdResource($ad);
     }
 }

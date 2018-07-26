@@ -17,11 +17,19 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::apiResource('clients', 'ClientController');
+//Route::apiResource('campaigns', 'CampaignController');
+
+Route::prefix('clients/{client}')->group(function (){
+	Route::apiResource('campaigns', 'CampaignController');
+});
+
+
 //Route::get('ads','LocationController@index');
-Route::get('getad/{id}', 'AdController@getAd');
+//Route::get('getad/{id}', 'AdController@getAd');
 //Beacon API routes
-Route::apiResource('beacons', 'BeaconController');
-Route::apiResource('ads', 'AdController');
+//Route::apiResource('beacons', 'BeaconController');
+//Route::apiResource('ads', 'AdController');
 //Route::post('ad','LocationController@store');
 
 /*

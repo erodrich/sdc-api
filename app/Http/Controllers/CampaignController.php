@@ -3,21 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Beacon;
-use App\Http\Resources\Beacon as BeaconResource;
+use App\Campaign;
+use App\Http\Resources\CampaignResource;
+use App\Client;
 
-class BeaconController extends Controller
+class CampaignController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Client $client)
     {
         //
-        $beacons = Beacon::all();
-        return new BeaconResource($beacons);
+        $campaigns = Campaign::where('client_id', '=', $client->id)->get();
+        return CampaignResource::collection($campaigns);
 
     }
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Campaign;
 use App\Http\Resources\CampaignResource;
 use App\Client;
+use App\Beacon;
 
 class CampaignController extends Controller
 {
@@ -37,6 +38,9 @@ class CampaignController extends Controller
 		$campaign->start_date = $request->input('start_date');
 		$campaign->end_date = $request->input('end_date');
 		$campaign->active = $request->input('active');
+		foreach($request->input('beacons') as $beacon_id){
+			$campaign->beacons()->save(Beacon::find($beacon_id));
+		}	
 
 		if($client->campaigns()->save($campaign)){
 			return new CampaignResource($campaign->fresh());
@@ -76,6 +80,10 @@ class CampaignController extends Controller
 		$campaign->end_date = $request->input('end_date');
 		$campaign->active = $request->input('active');
 
+		foreach($request->input('beacons') as $beacon_id){
+			$campaign->beacons()->save(Beacon::find($beacon_id));
+		}
+	
 		if($client->campaigns()->save($campaign)){
 			return new CampaignResource($campaign->fresh());
 		}

@@ -28,7 +28,6 @@ Route::prefix('clients/{client}/campaigns/{campaign}')->group(function (){
 });
 Route::prefix('clients/{client}/campaigns/{campaign}')->group(function (){
 	Route::get('beacons/{beacon}','BeaconController@index');
-	Route::put('beacons/{beacon}', 'BeaconController@asignar');
 });
 
 Route::prefix('clients/{client}')->group(function (){

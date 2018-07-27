@@ -16,7 +16,7 @@ class ClientController extends Controller
     public function index()
     {
         //
-        $clients = Client::with('campaigns')->get();
+        $clients = Client::all();
         return ClientResource::collection($clients);
     }
 
@@ -48,7 +48,8 @@ class ClientController extends Controller
     public function show($id)
     {
         //
-        return Client::find($id);
+		$client = Client::findOrFail($id);
+        return new ClientResource($client);
     }
 
     /**

@@ -16,14 +16,17 @@ class ClientResource extends JsonResource
     {
         //return parent::toArray($request);
     	return [
-			'type' => 'client',
+			'type' => 'clients',
 			'id' => (string) $this->id,
 			'attributes' => [
-				'name' => $this->name, 
-				'ruc' => $this->ruc, 
-				'description' => $this->description, 
+				'name'			=> $this->name, 
+				'ruc'			=> $this->ruc, 
+				'description'	=> $this->description, 
 			],
+			'relationships' => new ClientRelationshipResource($this),
+            'links'         => [
+                'self' => route('clients.show', ['client' => $this->id]),
+            ],
 		];
-	
 	}
 }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Campaign;
-use App\Http\Resources\CampaignResource;
-use App\Client;
 use App\Beacon;
+use App\Campaign;
+use App\Client;
+use App\Http\Resources\CampaignResource;
+use Illuminate\Http\Request;
 
 class CampaignController extends Controller
 {
@@ -20,7 +20,7 @@ class CampaignController extends Controller
         //
         //$campaigns = Campaign::where('client_id', '=', $client->id)->get();
         $campaigns = $client->campaigns()->get();
-		return CampaignResource::collection($campaigns);
+        return CampaignResource::collection($campaigns);
 
     }
 
@@ -33,19 +33,19 @@ class CampaignController extends Controller
     public function store(Client $client, Request $request)
     {
         //
-		$campaign = new Campaign;
-		$campaign->name = $request->input('name');
-		$campaign->start_date = $request->input('start_date');
-		$campaign->end_date = $request->input('end_date');
-		$campaign->active = $request->input('active');
-		foreach($request->input('beacons') as $beacon_id){
-			$campaign->beacons()->save(Beacon::find($beacon_id));
-		}	
+        $campaign = new Campaign;
+        $campaign->name = $request->input('name');
+        $campaign->start_date = $request->input('start_date');
+        $campaign->end_date = $request->input('end_date');
+        $campaign->active = $request->input('active');
+        foreach ($request->input('beacons') as $beacon_id) {
+            $campaign->beacons()->save(Beacon::find($beacon_id));
+        }
 
-		if($client->campaigns()->save($campaign)){
-			return new CampaignResource($campaign->fresh());
-		}
-		
+        if ($client->campaigns()->save($campaign)) {
+            return new CampaignResource($campaign->fresh());
+        }
+
     }
 
     /**
@@ -54,14 +54,17 @@ class CampaignController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client, $id)
+    public function show(Client $client, Campaign $campaign)
     {
-        //
-		$campaign = Campaign::findOrFail($id);
-		if($campaign->client_id == $client->id){
-			return new CampaignResource($campaign);
-		}
-		return response()->json(['error'=>'Resource not found'], 404);
+        /*
+        $campaign = Campaign::findOrFail($id);
+        if($campaign->client_id == $client->id){
+        return new CampaignResource($campaign);
+        }
+        return response()->json(['error'=>'Resource not found'], 404);
+         */
+        CampaignResource::withoutWrapping();
+        return new CampaignResource($campaign);
     }
 
     /**
@@ -74,19 +77,19 @@ class CampaignController extends Controller
     public function update(Client $client, Request $request, $id)
     {
         //
-		$campaign = Campaign::findOrFail($id);
-		$campaign->name = $request->input('name');
-		$campaign->start_date = $request->input('start_date');
-		$campaign->end_date = $request->input('end_date');
-		$campaign->active = $request->input('active');
+        $campaign = Campaign::findOrFail($id);
+        $campaign->name = $request->input('name');
+        $campaign->start_date = $request->input('start_date');
+        $campaign->end_date = $request->input('end_date');
+        $campaign->active = $request->input('active');
 
-		foreach($request->input('beacons') as $beacon_id){
-			$campaign->beacons()->save(Beacon::find($beacon_id));
-		}
-	
-		if($client->campaigns()->save($campaign)){
-			return new CampaignResource($campaign->fresh());
-		}
+        foreach ($request->input('beacons') as $beacon_id) {
+            $campaign->beacons()->save(Beacon::find($beacon_id));
+        }
+
+        if ($client->campaigns()->save($campaign)) {
+            return new CampaignResource($campaign->fresh());
+        }
     }
 
     /**
@@ -98,8 +101,8 @@ class CampaignController extends Controller
     public function destroy($id)
     {
         //
-		$campaign = Campaign::findOrFail($id);
-		$campaign->delete();
-		return response()->json('No existe el elemento', 204);
+        $campaign = Campaign::findOrFail($id);
+        $campaign->delete();
+        return response()->json('No existe el elemento', 204);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Client;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\ClientsResource;
 
 class ClientController extends Controller
 {
@@ -16,8 +17,10 @@ class ClientController extends Controller
     public function index()
     {
         //
-        $clients = Client::all();
-        return ClientResource::collection($clients);
+        //$clients = Client::all();
+        //return ClientResource::collection($clients);
+        return new ClientsResource(Client::with(['campaigns', 'beacons'])->paginate());
+
     }
 
     /**
@@ -45,10 +48,10 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Client $client)
     {
         //
-		$client = Client::findOrFail($id);
+        ClientResource::withoutWrapping();
         return new ClientResource($client);
     }
 

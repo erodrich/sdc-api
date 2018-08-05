@@ -18,8 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('clients', 'ClientController');
-Route::apiResource('campaigns', 'CampaignController');
-Route::apiResource('beacons', 'BeaconController');
+//Route::apiResource('campaigns', 'CampaignController');
+//Route::apiResource('beacons', 'BeaconController');
 
 /*
 Route::prefix('clients/{client}')->group(function () {
@@ -54,6 +54,13 @@ Route::get(
         'as' => 'clients.campaigns',
     ]
 );
+Route::get(
+    'clients/{client}/campaigns/{campaign}',
+    [
+        'uses' => ClientRelationshipController::class . '@campaign',
+        'as' => 'clients.campaigns.show',
+    ]
+);
 
 /** Clients - Beacons */
 Route::get(
@@ -86,11 +93,32 @@ Route::get(
         'as' => 'clients.campaigns.ads',
     ]
 );
-
 Route::get(
-    'clients/{client}/campaigns/{campaign}',
+    'clients/{client}/campaigns/{campaign}/ads/{ad}',
     [
-        'uses' => ClientRelationshipController::class . '@campaigns',
-        'as' => 'clients.campaigns.show',
+        'uses' => CampaignRelationshipController::class . '@ad',
+        'as' => 'clients.campaigns.ads.show',
+    ]
+);
+/** Campaign - Beacons */
+Route::get(
+    'clients/{client}/campaigns/{campaign}/relationships/beacons',
+    [
+        'uses' => CampaignRelationshipController::class . '@beacons',
+        'as' => 'clients.campaigns.relationships.adbeaconss',
+    ]
+);
+Route::get(
+    'clients/{client}/campaigns/{campaign}/beacons',
+    [
+        'uses' => CampaignRelationshipController::class . '@beacons',
+        'as' => 'clients.campaigns.beacons',
+    ]
+);
+Route::get(
+    'clients/{client}/campaigns/{campaign}/beacons/{beacon}',
+    [
+        'uses' => CampaignRelationshipController::class . '@beacon',
+        'as' => 'clients.campaigns.beacons.show',
     ]
 );

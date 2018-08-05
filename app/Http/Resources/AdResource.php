@@ -14,6 +14,18 @@ class AdResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        //return parent::toArray($request);
+        return [
+            'type' => 'ad',
+            'id' => (string) $this->id,
+            'attributes' => [
+                'title' => $this->title,
+                'subtitle' => $this->subtitle,
+                'image_full_name' => $this->image_full_name,
+                'image_full_url' => $this->image_full_url,
+                'image_pre_name' => $this->image_pre_name,
+                'image_pre_url' => $this->image_pre_url,
+            ],
+        ];
     }
 }

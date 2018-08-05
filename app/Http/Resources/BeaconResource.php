@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BeaconResource extends JsonResource
 {
+    
     /**
      * Transform the resource into an array.
      *
@@ -14,6 +15,7 @@ class BeaconResource extends JsonResource
      */
     public function toArray($request)
     {
+        $this->withoutWrapping();
         return [
             'type' => 'beacons',
             'id' => (string) $this->id,
@@ -23,7 +25,7 @@ class BeaconResource extends JsonResource
                 'ubicacion' => $this->ubicacion,
             ],
             'links' => [
-                'self' => route('beacons.show', ['beacon' => $this->id]),
+                'self' => route('clients.campaigns.beacons.show', ['client'=>$this->client_id,'campaign' => $this->campaign_id,'beacon' => $this->id]),
             ],
         ];
     }

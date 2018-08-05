@@ -40,9 +40,12 @@ class BeaconController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($beacon)
     {
         //
+        BeaconResource::withoutWrapping();
+        return new BeaconResource($beacon);
+
     }
 
     /**

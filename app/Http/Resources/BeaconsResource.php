@@ -14,6 +14,8 @@ class BeaconsResource extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'data' => BeaconResource::collection($this->collection),
+        ];
     }
 }

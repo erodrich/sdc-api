@@ -54,12 +54,12 @@ class AdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client, Campaign $campaign, $id)
+    public function show(Client $client, Campaign $campaign, Ad $ad)
     {
         //
 		
-		$ad = $campaign->ads()->find($id);
-		return new AdResource($ad);
+		AdResource::withoutWrapping();
+        return new AdResource($ad);
     }
 
     /**

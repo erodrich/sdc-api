@@ -14,6 +14,8 @@ class AdsResource extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'data' => AdResource::collection($this->collection),
+        ];
     }
 }

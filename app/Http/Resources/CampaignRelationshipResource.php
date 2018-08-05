@@ -16,6 +16,7 @@ class CampaignRelationshipResource extends Resource
     {
         return [
             'ads' => (new CampaignAdsRelationshipResource($this->ads))->additional(['campaign' => $this]),
+            'beacons' => (new CampaignBeaconsRelationshipResource($this->beacons))->additional(['campaign' => $this]),
         ];
     }
 

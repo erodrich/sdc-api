@@ -62,7 +62,7 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Client $client)
     {
         //
 		$client = Client::findOrFail($id);
@@ -80,10 +80,10 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Client $client)
     {
         //
-		$client = Client::find($id);
+		//$client = Client::find($id);
 		$client->delete();
 
 		return response()->json(null, 204);

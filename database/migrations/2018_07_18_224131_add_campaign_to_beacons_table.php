@@ -17,7 +17,7 @@ class AddCampaignToBeaconsTable extends Migration
             //
             $table->unsignedBigInteger('campaign_id')->nullable();
         
-            $table->foreign('campaign_id')->references('id')->on('campaigns');
+            $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('set null');
         });
     }
 

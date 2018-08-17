@@ -18,8 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('clients', 'ClientController');
-//Route::apiResource('campaigns', 'CampaignController');
-//Route::apiResource('beacons', 'BeaconController');
+Route::apiResource('campaigns', 'CampaignController',['except' => ['index','show']]);
+Route::apiResource('beacons', 'BeaconController',['except' => ['index','show']]);
+Route::apiResource('ads', 'AdController',['except' => ['index','show']]);
+
 
 /*
 Route::prefix('clients/{client}')->group(function () {
@@ -77,6 +79,13 @@ Route::get(
         'as' => 'clients.beacons',
     ]
 );
+Route::get(
+    'clients/{client}/beacons/{beacon}',
+    [
+        'uses' => ClientRelationshipController::class . '@beacon',
+        'as' => 'clients.beacons.show',
+    ]
+);
 
 /** Campaign - Ads */
 Route::get(
@@ -105,7 +114,7 @@ Route::get(
     'clients/{client}/campaigns/{campaign}/relationships/beacons',
     [
         'uses' => CampaignRelationshipController::class . '@beacons',
-        'as' => 'clients.campaigns.relationships.adbeaconss',
+        'as' => 'clients.campaigns.relationships.beacons',
     ]
 );
 Route::get(

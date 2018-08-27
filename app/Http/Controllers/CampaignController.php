@@ -30,21 +30,16 @@ class CampaignController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Client $client, Request $request)
+    public function store(Request $request)
     {
         //
         $campaign = new Campaign;
         $campaign->name = $request->input('name');
-        $campaign->start_date = $request->input('start_date');
-        $campaign->end_date = $request->input('end_date');
-        $campaign->active = $request->input('active');
-        foreach ($request->input('beacons') as $beacon_id) {
-            $campaign->beacons()->save(Beacon::find($beacon_id));
-        }
-
-        if ($client->campaigns()->save($campaign)) {
-            return new CampaignResource($campaign->fresh());
-        }
+        $campaign->start_date = date('Y-m-d',$request->input('start_date'));
+        //$campaign->start_date = $request->input('start_date');
+        $campaign->end_date = date('Y-m-d',$request->input('end_date'));
+        $campaign->active = $request->input('active') ? 1 : 0;
+        return new CampaignResource($campaign);
 
     }
 

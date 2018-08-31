@@ -27,7 +27,7 @@ class AdResource extends JsonResource
                 'image_pre_url' => $this->image_pre_url,
             ],
             'links' => [
-                'self' => route('clients.campaigns.ads.show', ['client'=>$this->client_id,'campaign' => $this->campaign_id,'ad' => $this->id]),
+                'self' => route('clients.campaigns.ads.show', ['client'=>$this->campaign->client_id,'campaign' => $this->campaign_id,'ad' => $this->id]),
             ],
         ];
     }

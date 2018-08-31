@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Client;
 use App\Campaign;
 use App\Beacon;
+use App\Http\Resources\BeaconsResource;
+use App\Http\Resources\BeaconResource;
+
 
 
 class BeaconController extends Controller
@@ -15,12 +18,10 @@ class BeaconController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Client $client, Campaign $campaign)
+    public function index()
     {
         //
-		if(is_null($client) || is_null($campaign)){
-			return response()->json('son null', 200);
-		}
+		return new BeaconsResource(Beacon::get());
     }
 
     /**
@@ -32,6 +33,16 @@ class BeaconController extends Controller
     public function store(Request $request)
     {
         //
+        $beacon = new Beacon;
+		$beacon->hw_id = $request->input('hw_id');
+		$beacon->alias = $request->input('alias');
+        $beacon->ubicacion = $request->input('ubicacion');
+        if($request->input('client_id') != null){
+            $beacon->client_id = $request->input('client_id');
+        }
+		if($beacon->save()){
+			return new BeaconResource($beacon);
+		}
     }
 
     /**
@@ -40,10 +51,9 @@ class BeaconController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($beacon)
+    public function show(Beacon $beacon)
     {
         //
-        BeaconResource::withoutWrapping();
         return new BeaconResource($beacon);
 
     }
@@ -58,6 +68,25 @@ class BeaconController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $update_beacon = Beacon::findOrFail($id);
+        $update_beacon->hw_id = $request->hw_id;
+		$update_beacon->alias = $request->alias;
+        $update_beacon->ubicacion = $request->ubicacion;
+        if($request->client_id != null){
+            $update_beacon->client_id = $request->client_id;
+        }
+        if($request->campaign_id != null){
+            $campaign = \App\Campaign::find($request->campaign_id);
+            if($campaign->client_id == $update_beacon->client_id){
+                $update_beacon->campaign_id = $request->campaign_id;
+            } else {
+                // Poner log despues
+            }
+            
+        }
+		if($update_beacon->save()){
+			return new BeaconResource($update_beacon);
+		}
     }
 
     /**
@@ -66,8 +95,11 @@ class BeaconController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Beacon $beacon)
     {
         //
+        $beacon->delete();
+
+		return response()->json(null, 204);
     }
 }

@@ -51,7 +51,6 @@ class ClientController extends Controller
     public function show(Client $client)
     {
         //
-        ClientResource::withoutWrapping();
         return new ClientResource($client);
     }
 
@@ -62,7 +61,7 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Client $client)
+    public function update(Request $request, $id)
     {
         //
 		$client = Client::findOrFail($id);

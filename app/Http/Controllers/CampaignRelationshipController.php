@@ -14,25 +14,41 @@ use App\Beacon;
 
 class CampaignRelationshipController extends Controller
 {
-    //
+    //Client/Campaign/Ads
     public function ads(Client $client, Campaign $campaign)
     {
-        return new AdsResource($campaign->ads);
+        
+        if($campaign->client_id == $client->id){
+            $ads = $campaign->ads;
+            return new AdsResource($ads);
+        }
+        return ['data' => []];
+        
     }
     public function ad(Client $client, Campaign $campaign, Ad $ad){
-        $result = $campaign->ads()->find($ad->id);
-        if($result){
-            return new AdResource($result);
+        if($campaign->client_id == $client->id){
+            $ad = $campaign->ads->find($ad->id);
+            if($ad){
+                return new AdResource($ad);
+            }
         }
+        return ['data' => []];
     }
+
+    //Client/Campaign/Beacons
     public function beacons(Client $client, Campaign $campaign)
     {
-        return new BeaconsResource($campaign->beacons);
+        if($campaign->client_id == $client->id){
+            $beacons = $campaign->beacons;
+            return new BeaconsResource($beacons);
+        }
+        return ['data' => []];
     }
     public function beacon(Client $client, Campaign $campaign, Beacon $beacon){
-        $result = $campaign->beacons()->find($beacon->id);
-        if($result){
-            return new BeaconResource($result);
+        if($campaign->client_id == $client->id){
+            $beacons = $campaign->beacons->find($beacon->id);
+            return new BeaconsResource($beacons);
         }
+        return ['data' => []];
     }
 }

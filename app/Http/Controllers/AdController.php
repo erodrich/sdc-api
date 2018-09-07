@@ -29,20 +29,24 @@ class AdController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Client $client, Campaign $campaign, Request $request)
+    public function store(Request $request)
     {
         //
-		$ad = new Ad;
-		$ad->title = $request->input('title');
-		$ad->subtitle = $request->input('subtitle');
-		$ad->image_full_name = $request->input('image_full_name');
-		$ad->image_pre_name = $request->input('image_pre_name');
-		$ad->image_full_url = $request->input('image_full_url');	
-		$ad->image_pre_url = $request->input('image_pre_url');
-		
-		if($campaign->ads()->save($ad)){
-			return $ad->fresh();	
-		}
+        $campaign = \App\Campaign::find($request->campaign_id);
+        if($campaign){
+            $ad = new \App\Ad;
+            $ad->title = $request->title;
+            $ad->subtitle = $request->subtitle;
+            $ad->image_full_name = $request->image_full_name;
+            $ad->image_pre_name = $request->image_pre_name;
+            $ad->image_full_url = $request->image_full_url;
+            $ad->image_pre_url = $request->image_pre_url;
+            $campaign->ads()->save($ad);
+            $ad->save();
+            return new AdResource($ad);
+        } else {
+            return response()->json('La campaña no existe', 400); 
+        }
 		
 		
 		
@@ -58,8 +62,7 @@ class AdController extends Controller
     {
         //
 		
-		AdResource::withoutWrapping();
-        return new AdResource($ad);
+		return new AdResource($ad);
     }
 
     /**
@@ -69,20 +72,30 @@ class AdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Client $client, Campaign $campaign, Request $request, $id)
+    public function update(Request $request, $id)
     {
         //
-		$ad = $campaign->ads()->find($id);
-		$ad->title = $request->input('title');
-		$ad->subtitle = $request->input('subtitle');
-		$ad->image_full_name = $request->input('image_full_name');
-		$ad->image_pre_name = $request->input('image_pre_name');
-		$ad->image_full_url = $request->input('image_full_url');	
-		$ad->image_pre_url = $request->input('image_pre_url');
+        $campaign = \App\Campaign::find($request->campaign_id);
+        if($campaign){
+            $ad = $campaign->ads()->find($id);
+            if($ad){
+                $ad->title = $request->input('title');
+                $ad->subtitle = $request->input('subtitle');
+                $ad->image_full_name = $request->input('image_full_name');
+                $ad->image_pre_name = $request->input('image_pre_name');
+                $ad->image_full_url = $request->input('image_full_url');	
+                $ad->image_pre_url = $request->input('image_pre_url');
+                $campaign->ads()->save($ad);
+                $ad->save();
+                return new AdResource($ad);
+            } else {
+                return response()->json('No existe el anuncio.', 400);
+            }
+        } else {
+            return response()->json('No existe la campaña.', 400);
+        }
+
 		
-		if($campaign->ads()->save($ad)){
-			return $ad->fresh();	
-		}
     }
 
     /**
@@ -91,11 +104,14 @@ class AdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client, Campaign $campaign, $id)
+    public function destroy($id)
     {
         //
-		$ad = $campaign->ads()->find($id);
-		$ad->delete();
-		return response()->json(null, 204);
+        $ad = \App\Ad::find($id);
+        if($ad){
+            $ad->delete();
+            return response()->json('Anuncio eliminado', 204);
+        }		
+		
     }
 }

@@ -19,7 +19,7 @@ class AdsTableSeeder extends Seeder
 				'subtitle' => $faker->sentence(),
                 'image_full_name' => $faker->sentence(),
 				'image_pre_name' => $faker->sentence(),
-				'image_full_url' => "https://picsum.photos/640/4800/?random",
+				'image_full_url' => "https://picsum.photos/640/480/?random",
 				'image_pre_url' => "https://picsum.photos/640/120/?random",
                 'campaign_id' => App\Campaign::find(rand(1,10))->id,
 			]);

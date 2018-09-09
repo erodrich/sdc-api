@@ -15,16 +15,22 @@ class ClientRelationshipController extends Controller
     //
     public function campaigns(Client $client)
     {
-        return new CampaignsResource($client->campaigns);
+        $campaigns = $client->campaigns;
+        if($campaigns){
+            return new CampaignsResource($campaigns);
+        }
+        return ['data' => []];
+        
     }
 
     public function campaign(Client $client, Campaign $campaign)
     {
-        $result = $client->campaigns()->find($campaign->id);
+        $result = $client->campaigns->find($campaign->id);
         if($result){
             return new CampaignResource($result);
         }
-        return null;
+        
+        return ['data' => []];
 
     }
 
@@ -35,11 +41,11 @@ class ClientRelationshipController extends Controller
 
     public function beacon(Client $client, Beacon $beacon)
     {
-        $result = $client->beacons()->find($beacon->id);
+        $result = $client->beacons->find($beacon->id);
         if($result){
             return new BeaconResource($result);
         }
-        return null;
+        return ['data' => []];
 
     }
 }

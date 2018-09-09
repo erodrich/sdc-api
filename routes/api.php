@@ -17,6 +17,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/login', 'AuthController@login')->name('login');
+Route::post('/register', 'AuthController@register')->name('register');
+Route::middleware('auth:api')->post('/logout', 'AuthController@logout');
+
 Route::apiResource('clients', 'ClientController');
 Route::apiResource('campaigns', 'CampaignController');
 Route::apiResource('beacons', 'BeaconController');

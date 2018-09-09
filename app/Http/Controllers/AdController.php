@@ -58,10 +58,9 @@ class AdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client, Campaign $campaign, Ad $ad)
+    public function show(Ad $ad)
     {
         //
-		
 		return new AdResource($ad);
     }
 
@@ -110,7 +109,7 @@ class AdController extends Controller
         $ad = \App\Ad::find($id);
         if($ad){
             $ad->delete();
-            return response()->json('Anuncio eliminado', 204);
+            return response()->json('Elemento eliminado', 204);
         }		
 		
     }

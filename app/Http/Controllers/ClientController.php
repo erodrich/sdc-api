@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Client;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientsResource;
+use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -32,14 +33,23 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         //
-		
-		$client = $request->isMethod('put') ? Client::findOrFail($request->id) : new Client;
-		$client->name = $request->input('name');
-		$client->ruc = $request->input('ruc');
-		$client->description = $request->input('description');
-		if($client->save()){
-			return new ClientResource($client);
-		}
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'ruc' => 'required',
+            'description' => 'required'
+        ]);
+         
+        if ($validator->fails()) {
+            return response()->json('Bad Request', 400);
+        } else {
+            $client = new Client;
+            $client->name = $request->input('name');
+            $client->ruc = $request->input('ruc');
+            $client->description = $request->input('description');
+            $client->save();
+            return new ClientResource($client);
+        }
+
     }
 
     /**
@@ -64,13 +74,23 @@ class ClientController extends Controller
     public function update(Request $request, $id)
     {
         //
-		$client = Client::findOrFail($id);
-		$client->name = $request->input('name');
-		$client->ruc = $request->input('ruc');
-		$client->description = $request->input('description');
-		if($client->save()){
-			return new ClientResource($client->fresh());
-		}
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'ruc' => 'required',
+            'description' => 'required'
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json('Bad Request', 400);
+        } else {
+            $client = Client::findOrFail($id);
+            $client->name = $request->input('name');
+            $client->ruc = $request->input('ruc');
+            $client->description = $request->input('description');
+            $client->save();
+            return new ClientResource($client->fresh());
+        }
+
     }
 
     /**
@@ -82,9 +102,13 @@ class ClientController extends Controller
     public function destroy(Client $client)
     {
         //
-		//$client = Client::find($id);
-		$client->delete();
-
-		return response()->json(null, 204);
+        $client = Client::find($client->id);
+        if($client){
+            $client->delete();
+            return response()->json('Deleted', 204);
+        } else {
+            return response()->json('Not found', 400);
+        }
+		
     }
 }

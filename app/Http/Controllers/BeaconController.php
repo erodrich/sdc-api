@@ -100,6 +100,6 @@ class BeaconController extends Controller
         //
         $beacon->delete();
 
-		return response()->json(null, 204);
+		return response()->json('Deleted', 204);
     }
 }

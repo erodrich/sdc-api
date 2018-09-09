@@ -73,7 +73,8 @@ class CampaignController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $client = \App\Client::find($campaign->client_id);
+        
+        $client = \App\Client::find($request->client_id);
         if($client){
             $campaign = $client->campaigns()->find($id);
             if($campaign){

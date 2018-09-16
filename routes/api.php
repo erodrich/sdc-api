@@ -25,6 +25,7 @@ Route::apiResource('clients', 'ClientController');
 Route::apiResource('campaigns', 'CampaignController');
 Route::apiResource('beacons', 'BeaconController');
 Route::apiResource('ads', 'AdController');
+Route::get('getad/{id}', 'AppController@deliverAd');
 
 //Clients - Campaigns 
 Route::get(

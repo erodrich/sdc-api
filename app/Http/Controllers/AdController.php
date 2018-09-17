@@ -41,6 +41,7 @@ class AdController extends Controller
             $ad->image_pre_name = $request->image_pre_name;
             $ad->image_full_url = $request->image_full_url;
             $ad->image_pre_url = $request->image_pre_url;
+            $ad->video_url = $request->video_url;
             $campaign->ads()->save($ad);
             $ad->save();
             return new AdResource($ad);
@@ -84,6 +85,7 @@ class AdController extends Controller
                 $ad->image_pre_name = $request->input('image_pre_name');
                 $ad->image_full_url = $request->input('image_full_url');	
                 $ad->image_pre_url = $request->input('image_pre_url');
+                $ad->video_url = $request->input('video_url');
                 $campaign->ads()->save($ad);
                 $ad->save();
                 return new AdResource($ad);

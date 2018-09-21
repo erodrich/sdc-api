@@ -28,6 +28,7 @@ class BeaconResource extends JsonResource
                 'hw_id' => $this->hw_id,
                 'alias' => $this->alias,
                 'ubicacion' => $this->ubicacion,
+                'created_at' => $this->created_at->toDateString(),
             ],
             'links' => [
                 'self' => $sefl_route,

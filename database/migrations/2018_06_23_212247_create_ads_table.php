@@ -21,6 +21,7 @@ class CreateAdsTable extends Migration
             $table->string('image_pre_name')->nullable();
             $table->string('image_full_url')->nullable();
             $table->string('image_pre_url')->nullable();
+            $table->string('video_url')->nullable();
             $table->timestamps();
         });
     }

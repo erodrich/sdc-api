@@ -22,6 +22,7 @@ class AdsTableSeeder extends Seeder
 				'image_full_url' => "https://picsum.photos/640/480/?random",
 				'image_pre_url' => "https://picsum.photos/640/120/?random",
                 'campaign_id' => App\Campaign::find(rand(1,10))->id,
+                'video_url' => "https://www.youtube.com/watch?v=YN2URsx8gIs",
 			]);
 		}
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Client;
 use App\Http\Resources\ClientResource;
@@ -10,6 +11,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
+    protected $clase = "ClientController";
+
+    protected function debug($metodo, $mensaje){
+        return Log::debug($this->clase." ::: ".$metodo." ::: ".$mensaje);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,6 +40,8 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         //
+        $metodo = "store";
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'ruc' => 'required',
@@ -40,6 +49,7 @@ class ClientController extends Controller
         ]);
          
         if ($validator->fails()) {
+            $this->debug($metodo, "Fallo la validación de datos.");
             return response()->json('Bad Request', 400);
         } else {
             $client = new Client;
@@ -47,6 +57,7 @@ class ClientController extends Controller
             $client->ruc = $request->input('ruc');
             $client->description = $request->input('description');
             $client->save();
+            $this->debug($metodo, $client);
             return new ClientResource($client);
         }
 

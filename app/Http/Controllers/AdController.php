@@ -32,6 +32,22 @@ class AdController extends Controller
     public function store(Request $request)
     {
         //
+        $this->validate($request,[
+            'image_full_name'=>'required|mimes:jpeg,bmp,jpg,png|between:1, 6000',
+            'image_pre_name'=>'required|mimes:jpeg,bmp,jpg,png|between:1, 6000',
+        ]);
+ 
+        $image_full_name = $request->file('image_full_name')->getRealPath();
+        $image_pre_name = $request->file('image_pre_name')->getRealPath();
+ 
+        Cloudder::upload($image_full_name, null);
+        list($width, $height) = getimagesize($image_full_name);
+        $image_full_url = Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
+        
+        Cloudder::upload($image_pre_name, null);
+        list($width, $height) = getimagesize($image_pre_name);
+        $image_pre_url = Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
+  
         $campaign = \App\Campaign::find($request->campaign_id);
         if($campaign){
             $ad = new \App\Ad;
@@ -39,8 +55,8 @@ class AdController extends Controller
             $ad->subtitle = $request->subtitle;
             $ad->image_full_name = $request->image_full_name;
             $ad->image_pre_name = $request->image_pre_name;
-            $ad->image_full_url = $request->image_full_url;
-            $ad->image_pre_url = $request->image_pre_url;
+            $ad->image_full_url = $image_full_url;
+            $ad->image_pre_url = $image_pre_url;
             $ad->video_url = $request->video_url;
             $campaign->ads()->save($ad);
             $ad->save();

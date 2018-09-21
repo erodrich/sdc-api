@@ -19,6 +19,7 @@ class CampaignController extends Controller
     {
         //
         //
+        Log::debug('Clients index');
         $campaigns = $client->campaigns->get();
         return CampaignResource::collection($campaigns);
 
@@ -59,7 +60,7 @@ class CampaignController extends Controller
     public function show(Client $client, Campaign $campaign)
     {
         //
-        
+        Log::debug('An informational message.');
         return new CampaignResource($campaign);
     }
 

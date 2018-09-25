@@ -11,8 +11,14 @@ class AppController extends Controller
         $beacon = \App\Beacon::where('hw_id', '=', $id)->first();
         if($beacon){
             //$ad = \App\Ad::find(rand(1,10));
-            $ad = $beacon->campaign()->first()->ads()->first();
-            return new \App\Http\Resources\AdResource($ad);
+            try{
+                $ad = $beacon->campaign()->first()->ads()->first();
+                return new \App\Http\Resources\AdResource($ad);
+            }
+            catch (Exception $ex){
+                return response()->json('El Beacon no tiene campaña o anuncios asignados', 400);
+            }
+            
         }
     }
 }

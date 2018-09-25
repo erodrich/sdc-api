@@ -12,11 +12,20 @@ use App\Http\Resources\CampaignsResource;
 
 class ClientRelationshipController extends Controller
 {
+    public $log;
+
+    public function __construct()
+    {
+        $this->log = new \App\Utils\SDCLog('ClientRelationshipController');
+    }
+
     //
     public function campaigns(Client $client)
     {
+        $method = 'campaigns';
         $campaigns = $client->campaigns;
         if($campaigns){
+            $this->log->debug($method, $campaigns);
             return new CampaignsResource($campaigns);
         }
         return ['data' => []];
@@ -25,8 +34,10 @@ class ClientRelationshipController extends Controller
 
     public function campaign(Client $client, Campaign $campaign)
     {
+        $method = 'campaign';
         $result = $client->campaigns->find($campaign->id);
         if($result){
+            $this->log->debug($method, $campaign);
             return new CampaignResource($result);
         }
         
@@ -36,13 +47,17 @@ class ClientRelationshipController extends Controller
 
     public function beacons(Client $client)
     {
+        $method = 'beacons';
+        $this->log->debug($method, $client->beacons);
         return new BeaconsResource($client->beacons);
     }
 
     public function beacon(Client $client, Beacon $beacon)
     {
+        $method = 'beacon';
         $result = $client->beacons->find($beacon->id);
         if($result){
+            $this->log->debug($method, $result);
             return new BeaconResource($result);
         }
         return ['data' => []];

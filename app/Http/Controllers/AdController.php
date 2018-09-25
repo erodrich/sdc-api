@@ -7,9 +7,17 @@ use App\Campaign;
 use App\Ad;
 use App\Client;
 use App\Http\Resources\AdResource;
+use App\Utils\SdcLog;
+use JD\Cloudder\Facades\Cloudder;
 
 class AdController extends Controller
 {
+    public $log;
+
+    public function __construct()
+    {
+        $this->log = new \App\Utils\SDCLog('AdController');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -32,22 +40,43 @@ class AdController extends Controller
     public function store(Request $request)
     {
         //
+        $method = 'store';
+        $this->log->debug($method, 'Se recibio: '.$request);
+
+        $name_pre = $request->file('image_pre')->getClientOriginalName();
+        $image_pre = $request->file('image_pre')->getRealPath();
+        Cloudder::upload($image_pre, null);
+
+        $name_full = $request->file('image_full')->getClientOriginalName();
+        $image_full = $request->file('image_full')->getRealPath();
+        Cloudder::upload($image_full, null);
+
+        list($width, $height) = getimagesize($image_pre);
+        $image_pre_url= Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
+        list($width, $height) = getimagesize($image_full);
+        $image_full_url= Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
+ 
         $campaign = \App\Campaign::find($request->campaign_id);
-        if($campaign){
-            $ad = new \App\Ad;
-            $ad->title = $request->title;
-            $ad->subtitle = $request->subtitle;
-            $ad->image_full_name = $request->image_full_name;
-            $ad->image_pre_name = $request->image_pre_name;
-            $ad->image_full_url = $request->image_full_url;
-            $ad->image_pre_url = $request->image_pre_url;
-            $ad->video_url = $request->video_url;
-            $campaign->ads()->save($ad);
-            $ad->save();
-            return new AdResource($ad);
-        } else {
-            return response()->json('La campaña no existe', 400); 
+        try{
+            if($campaign){
+                $ad = new \App\Ad;
+                $ad->title = $request->title;
+                $ad->subtitle = $request->subtitle;
+                $ad->image_full_name = $name_full;
+                $ad->image_full_url = $image_full_url;
+                $ad->image_pre_name = $name_pre;
+                $ad->image_pre_url = $image_pre_url;
+                $ad->video_url = $request->video_url;
+                $campaign->ads()->save($ad);
+                $ad->save();
+                return new AdResource($ad);
+            } else {
+                return response()->json('La campaña no existe', 400); 
+            }
+        } catch (Exception $ex) {
+            $this->log->debug($method, 'Error: '.$ex);
         }
+
 		
 		
 		

@@ -20,12 +20,13 @@ class AdResource extends JsonResource
             'id' => (string) $this->id,
             'attributes' => [
                 'title' => $this->title,
-                'subtitle' => $this->subtitle,
+                'description' => $this->description,
                 'image_full_name' => $this->image_full_name,
                 'image_full_url' => $this->image_full_url,
                 'image_pre_name' => $this->image_pre_name,
                 'image_pre_url' => $this->image_pre_url,
                 'video_url' => $this->video_url,
+                'link_url' => $this->link_url,
                 'created_at' => $this->created_at->toDateString(),
             ],
             'links' => [

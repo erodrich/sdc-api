@@ -13,6 +13,7 @@ class AdsTableSeeder extends Seeder
     {
         //
         $faker = \Faker\Factory::create();
+        $campaign = \App\Campaign::all();
 		for($i = 0; $i < 10; $i++){
 			App\Ad::create([
 				'title' => $faker->sentence(),
@@ -21,7 +22,7 @@ class AdsTableSeeder extends Seeder
 				'image_pre_name' => $faker->sentence(),
 				'image_full_url' => "https://picsum.photos/640/480/?random",
 				'image_pre_url' => "https://picsum.photos/640/120/?random",
-                'campaign_id' => App\Campaign::find(rand(1,10))->id,
+                'campaign_id' => $campaign->random()->first()->id,
                 'video_url' => "https://www.youtube.com/watch?v=YN2URsx8gIs",
 			]);
 		}

@@ -20,7 +20,7 @@ class CampaignController extends Controller
         //
         //
         Log::debug('Clients index');
-        $campaigns = $client->campaigns->get();
+        $campaigns = $client->campaigns->orderBy('id','desc')->get();
         return CampaignResource::collection($campaigns);
 
     }

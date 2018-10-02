@@ -19,7 +19,7 @@ class CampaignController extends Controller
     {
         //
         //
-        $campaigns = $client->campaigns->orderBy('created_at','desc')->get();
+        $campaigns = $client->campaigns->orderBy('id','desc')->get();
         return CampaignResource::collection($campaigns);
 
     }

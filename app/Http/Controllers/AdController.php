@@ -61,7 +61,7 @@ class AdController extends Controller
             if($campaign){
                 $ad = new \App\Ad;
                 $ad->title = $request->title;
-                $ad->subtitle = $request->subtitle;
+                $ad->description = $request->description;
                 $ad->image_full_name = $name_full;
                 $ad->image_full_url = $image_full_url;
                 $ad->image_pre_name = $name_pre;
@@ -109,7 +109,7 @@ class AdController extends Controller
             $ad = $campaign->ads()->find($id);
             if($ad){
                 $ad->title = $request->input('title');
-                $ad->subtitle = $request->input('subtitle');
+                $ad->description = $request->input('description');
                 $ad->image_full_name = $request->input('image_full_name');
                 $ad->image_pre_name = $request->input('image_pre_name');
                 $ad->image_full_url = $request->input('image_full_url');	

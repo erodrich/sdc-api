@@ -67,6 +67,7 @@ class AdController extends Controller
                 $ad->image_pre_name = $name_pre;
                 $ad->image_pre_url = $image_pre_url;
                 $ad->video_url = $request->video_url;
+                $ad->link_url = $request->link_url;
                 $campaign->ads()->save($ad);
                 $ad->save();
                 return new AdResource($ad);
@@ -106,18 +107,19 @@ class AdController extends Controller
         //
         $method = 'update';
         $this->log->debug($method, 'Se recibio: '.$request);
+        $this->log->debug($method, "Campaign: ".$request->campaign_id);
 
         $campaign = \App\Campaign::find($request->campaign_id);
         if($campaign){
             $ad = $campaign->ads()->find($id);
             if($ad){
-                $ad->title = $request->input('title');
-                $ad->description = $request->input('description');
-                $ad->image_full_name = $request->input('image_full_name');
-                $ad->image_pre_name = $request->input('image_pre_name');
-                $ad->image_full_url = $request->input('image_full_url');	
-                $ad->image_pre_url = $request->input('image_pre_url');
-                $ad->video_url = $request->input('video_url');
+                $ad->title = $request->title;
+                $ad->description = $request->description;
+                $ad->image_full_name = $name_full;
+                $ad->image_full_url = $image_full_url;
+                $ad->image_pre_name = $name_pre;
+                $ad->image_pre_url = $image_pre_url;
+                $ad->video_url = $request->video_url;
                 $ad->link_url = $request->link_url;
                 $campaign->ads()->save($ad);
                 $ad->save();

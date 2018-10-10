@@ -104,6 +104,9 @@ class AdController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $method = 'update';
+        $this->log->debug($method, 'Se recibio: '.$request);
+
         $campaign = \App\Campaign::find($request->campaign_id);
         if($campaign){
             $ad = $campaign->ads()->find($id);
@@ -115,6 +118,7 @@ class AdController extends Controller
                 $ad->image_full_url = $request->input('image_full_url');	
                 $ad->image_pre_url = $request->input('image_pre_url');
                 $ad->video_url = $request->input('video_url');
+                $ad->link_url = $request->link_url;
                 $campaign->ads()->save($ad);
                 $ad->save();
                 return new AdResource($ad);

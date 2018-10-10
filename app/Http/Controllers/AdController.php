@@ -106,6 +106,7 @@ class AdController extends Controller
     {
         //
         $method = 'update';
+        $this->log->debug(var_dump($_POST));
         $this->log->debug($method, 'Se recibio: '.$request);
         $this->log->debug($method, "Campaign: ".$request->input("campaign_id"));
 

@@ -107,9 +107,9 @@ class AdController extends Controller
         //
         $method = 'update';
         $this->log->debug($method, 'Se recibio: '.$request);
-        $this->log->debug($method, "Campaign: ".$request->campaign_id);
+        $this->log->debug($method, "Campaign: ".$request->input("campaign_id"));
 
-        $campaign = \App\Campaign::find($request->campaign_id);
+        $campaign = \App\Campaign::find($request->input("campaign_id"));
         if($campaign){
             $ad = $campaign->ads()->find($id);
             if($ad){

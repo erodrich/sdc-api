@@ -45,10 +45,12 @@ class AdController extends Controller
 
         $name_pre = $request->file('image_pre')->getClientOriginalName();
         $image_pre = $request->file('image_pre')->getRealPath();
+        $this->log->debug($method, 'Image_pre: '.$request->file('image_pre')->getRealPath());
         Cloudder::upload($image_pre, null);
 
         $name_full = $request->file('image_full')->getClientOriginalName();
         $image_full = $request->file('image_full')->getRealPath();
+        $this->log->debug($method, 'Image_full: '.$request->file('image_full')->getRealPath());
         Cloudder::upload($image_full, null);
 
         list($width, $height) = getimagesize($image_pre);
@@ -106,11 +108,22 @@ class AdController extends Controller
     {
         //
         $method = 'update';
-        $this->log->debug($method, var_dump($_POST));
         $this->log->debug($method, 'Se recibio: '.$request);
-        $this->log->debug($method, "Campaign: ".$request->input("campaign_id"));
 
-        $campaign = \App\Campaign::find($request->input("campaign_id"));
+        $name_pre = $request->file('image_pre')->getClientOriginalName();
+        $image_pre = $request->file('image_pre')->getRealPath();
+        Cloudder::upload($image_pre, null);
+
+        $name_full = $request->file('image_full')->getClientOriginalName();
+        $image_full = $request->file('image_full')->getRealPath();
+        Cloudder::upload($image_full, null);
+
+        list($width, $height) = getimagesize($image_pre);
+        $image_pre_url= Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
+        list($width, $height) = getimagesize($image_full);
+        $image_full_url= Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
+
+        $campaign = \App\Campaign::find($request->campaign_id);
         if($campaign){
             $ad = $campaign->ads()->find($id);
             if($ad){

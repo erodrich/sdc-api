@@ -45,16 +45,13 @@ class AdController extends Controller
 
         $name_pre = $request->file('image_pre')->getClientOriginalName();
         $image_pre = $request->file('image_pre')->getRealPath();
-        $this->log->debug($method, 'Image_pre: '.$request->file('image_pre')->getRealPath());
         Cloudder::upload($image_pre, null);
+        list($width, $height) = getimagesize($image_pre);
+        $image_pre_url= Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
 
         $name_full = $request->file('image_full')->getClientOriginalName();
         $image_full = $request->file('image_full')->getRealPath();
-        $this->log->debug($method, 'Image_full: '.$request->file('image_full')->getRealPath());
         Cloudder::upload($image_full, null);
-
-        list($width, $height) = getimagesize($image_pre);
-        $image_pre_url= Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
         list($width, $height) = getimagesize($image_full);
         $image_full_url= Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height"=>$height]);
  

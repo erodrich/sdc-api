@@ -12,7 +12,7 @@ use JD\Cloudder\Facades\Cloudder;
 
 class AdController extends Controller
 {
-    public $log;
+    private $log;
 
     public function __construct()
     {

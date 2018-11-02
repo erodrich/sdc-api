@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
+Route::get('getad/{id}', 'AppController@deliverAd');
+Route::post('statistics', 'StatisticController@store');
+Route::get('statistics', 'StatisticController@index');
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -25,7 +29,7 @@ Route::apiResource('clients', 'ClientController');
 Route::apiResource('campaigns', 'CampaignController');
 Route::apiResource('beacons', 'BeaconController');
 Route::apiResource('ads', 'AdController');
-Route::get('getad/{id}', 'AppController@deliverAd');
+
 
 //Clients - Campaigns 
 Route::get(
@@ -117,5 +121,3 @@ Route::get(
         'as' => 'clients.campaigns.beacons.show',
     ]
 );
-
-

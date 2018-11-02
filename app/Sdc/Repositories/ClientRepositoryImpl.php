@@ -46,9 +46,30 @@ class ClientRepositoryImpl implements ClientRepositoryInterface
         
     }
 
-    public function update(array $data){
-
+    public function update(array $data, int $id){
+        $metodo = "update";
+        CustomLog::debug($this->class, $metodo, "Input: ".json_encode($data));
+        
+        try{
+            $this->client = $this->client->findOrFail($id);
+            if($this->client){
+                $this->client->name = $data['name'];
+                $this->client->ruc = $data['ruc'];
+                $this->client->description = $data['description'];
+                $this->client->save();
+                CustomLog::debug($this->class, $metodo, "Se actualizo el cliente: ".json_encode($this->client));
+                return $this->client;
+            } else {
+                CustomLog::debug($this->class, $metodo, "No existe el cliente: ".$id);
+                return null;
+            }
+        } 
+        catch(Exception $ex) {
+            CustomLog::error($this->class, $metodo, json_encode($ex));
+            return null; 
+        }
     }
+
     public function delete(int $id){
         $this->client = $this->client->find($id);
         if($this->client){

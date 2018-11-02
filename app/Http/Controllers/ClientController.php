@@ -94,6 +94,8 @@ class ClientController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $metodo = "update";
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'ruc' => 'required',
@@ -101,14 +103,16 @@ class ClientController extends Controller
         ]);
         
         if ($validator->fails()) {
+            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
             return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
         } else {
-            $client = Client::findOrFail($id);
-            $client->name = $request->input('name');
-            $client->ruc = $request->input('ruc');
-            $client->description = $request->input('description');
-            $client->save();
-            return new ClientResource($client->fresh());
+            $client = $this->clientDao->update($request->all(), $id);
+            if($client){
+                return new ClientResource($client);
+            } else {
+                return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            }
+            
         }
 
     }

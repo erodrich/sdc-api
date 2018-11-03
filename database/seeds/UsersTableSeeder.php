@@ -21,6 +21,12 @@ class UsersTableSeeder extends Seeder
 			'password' => $password,
 			'client_id' => App\Client::find(rand(1,10))->id,
 		]);
+		App\User::create([
+			'name' => 'erodrich',
+			'email' => 'erodrich@sdc-api.com',
+			'password' => $password,
+			'client_id' => App\Client::find(rand(1,10))->id,
+		]);
 		
 		for($i = 0; $i < 10; $i++){
 			App\User::create([

@@ -3,6 +3,7 @@
 namespace App\Sdc\Repositories;
 
 use App\Campaign;
+use App\Client;
 
 class CampaignRepositoryImpl implements CampaignRepositoryInterface
 {
@@ -48,16 +49,17 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
     public function retrieveClientCampaigns(Client $client)
     {
         try{
-            $campaigns = $client->campaigns->orderBy('id','desc')->get();
+            $campaigns = $client->campaigns()->orderBy('id','desc')->get();
             return $campaigns;
         } catch (Exception $ex) {
             return null;
         }
     }
 
-    public function retrieveClientCampaign(Client $client, int $id)
+    public function retrieveClientCampaign(int $client, int $id)
     {
         try{
+            $client = Client::find($client);
             $campaign = $client->campaigns()->find($id);
             if($campaign){
                 return $campaign;

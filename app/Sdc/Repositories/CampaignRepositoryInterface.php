@@ -8,5 +8,5 @@ interface CampaignRepositoryInterface extends BaseRepositoryInterface
 {
 
     public function retrieveClientCampaigns(Client $client);
-    public function retrieveClientCampaign(Client $client, int $id);
+    public function retrieveClientCampaign(int $client, int $id);
 }

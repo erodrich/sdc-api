@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use App\Campaign;
 use App\Client;
 use App\Beacon;
@@ -12,12 +13,16 @@ use App\Http\Resources\CampaignsResource;
 
 class ClientRelationshipController extends Controller
 {
+<<<<<<< HEAD
+    protected $metodo = "ClientRelationshipController";
+=======
     public $log;
 
     public function __construct()
     {
         $this->log = new \App\Utils\SDCLog('ClientRelationshipController');
     }
+>>>>>>> 44fd4ea6c1768e856e84c72aa996ef0c9c20c11f
 
     //
     public function campaigns(Client $client)
@@ -25,7 +30,11 @@ class ClientRelationshipController extends Controller
         $method = 'campaigns';
         $campaigns = $client->campaigns;
         if($campaigns){
+<<<<<<< HEAD
+            Log::debug($this->metodo.' ::: Campaña: '.$campaigns);
+=======
             $this->log->debug($method, $campaigns);
+>>>>>>> 44fd4ea6c1768e856e84c72aa996ef0c9c20c11f
             return new CampaignsResource($campaigns);
         }
         return ['data' => []];

@@ -7,9 +7,20 @@ use App\Client;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientsResource;
 use Illuminate\Support\Facades\Validator;
+use App\Sdc\Repositories\ClientRepositoryInterface;
+use App\Sdc\Utilities\CustomLog;
+use App\Sdc\Utilities\Constants;
 
 class ClientController extends Controller
 {
+
+    protected $class = "ClientController";
+
+    public function __construct(ClientRepositoryInterface $clientDao){
+        $this->clientDao = $clientDao;
+
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,10 +28,10 @@ class ClientController extends Controller
      */
     public function index()
     {
-        //
-        //$clients = Client::all();
-        //return ClientResource::collection($clients);
-        return new ClientsResource(Client::with(['campaigns', 'beacons'])->paginate());
+        $metodo = "index";
+
+        CustomLog::debug($this->class, $metodo, json_encode($this->clientDao->retrieveAll()));
+        return new ClientsResource($this->clientDao->retrieveAll());
 
     }
 
@@ -33,6 +44,8 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         //
+        $metodo = "store";
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'ruc' => 'required',
@@ -40,13 +53,12 @@ class ClientController extends Controller
         ]);
          
         if ($validator->fails()) {
-            return response()->json('Bad Request', 400);
+            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
+            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
         } else {
-            $client = new Client;
-            $client->name = $request->input('name');
-            $client->ruc = $request->input('ruc');
-            $client->description = $request->input('description');
-            $client->save();
+            $client = $this->clientDao->save($request->all());
+            
+            CustomLog::debug($this->class, $metodo, json_encode($client));
             return new ClientResource($client);
         }
 
@@ -58,10 +70,18 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client)
+    public function show($id)
     {
-        //
-        return new ClientResource($client);
+        $metodo = "show";
+        
+        $client = $this->clientDao->retrieveById($id);
+        CustomLog::debug($this->class, $metodo, json_encode($client));
+        if($client){
+            return new ClientResource($client);
+        } else {
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+        }
+        
     }
 
     /**
@@ -74,6 +94,8 @@ class ClientController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $metodo = "update";
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'ruc' => 'required',
@@ -81,14 +103,16 @@ class ClientController extends Controller
         ]);
         
         if ($validator->fails()) {
-            return response()->json('Bad Request', 400);
+            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
+            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
         } else {
-            $client = Client::findOrFail($id);
-            $client->name = $request->input('name');
-            $client->ruc = $request->input('ruc');
-            $client->description = $request->input('description');
-            $client->save();
-            return new ClientResource($client->fresh());
+            $client = $this->clientDao->update($request->all(), $id);
+            if($client){
+                return new ClientResource($client);
+            } else {
+                return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            }
+            
         }
 
     }
@@ -99,15 +123,17 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client)
+    public function destroy($id)
     {
         //
-        $client = Client::find($client->id);
-        if($client){
-            $client->delete();
-            return response()->json('Deleted', 204);
+        $metodo = "destroy";
+        
+        if($this->clientDao->delete($id)){
+            CustomLog::debug($this->class, $metodo, "Se elimino el cliente: ".$id);
+            return response()->json(Constants::RESPONSE_DELETE, Constants::CODE_DELETE);
         } else {
-            return response()->json('Not found', 400);
+            CustomLog::debug($this->class, $metodo, "No existe el cliente: ".$id);
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
         }
 		
     }

@@ -2,25 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Beacon;
 use App\Campaign;
 use App\Client;
 use App\Http\Resources\CampaignResource;
+use App\Sdc\Utilities\CustomLog;
 use Illuminate\Http\Request;
+use App\Sdc\Repositories\CampaignRepositoryInterface;
 
 class CampaignController extends Controller
 {
+    protected $class = "CampaignController";
+    protected $campaignDao;
+
+    public function __construct(CampaignRepositoryInterface $campaignDao)
+    {
+        $this->campaignDao = $campaignDao;
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Client $client)
     {
         //
-        //
-        Log::debug('Clients index');
-        $campaigns = $client->campaigns->orderBy('id','desc')->get();
+        $metodo = "index";
+
+        $campaigns = $this->campaignDao->retrieveClientCampaigns($client);
+        CustomLog::debug($this->class, $metodo, json_encode($campaigns));
         return CampaignResource::collection($campaigns);
 
     }
@@ -29,7 +39,7 @@ class CampaignController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return CampaignResource
      */
     public function store(Request $request)
     {
@@ -55,7 +65,7 @@ class CampaignController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return CampaignResource
      */
     public function show(Client $client, Campaign $campaign)
     {
@@ -69,7 +79,7 @@ class CampaignController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return CampaignResource
      */
     public function update(Request $request, $id)
     {
@@ -100,7 +110,7 @@ class CampaignController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function destroy($id)
     {

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Client;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientsResource;
 use Illuminate\Support\Facades\Validator;
@@ -55,11 +54,14 @@ class ClientController extends Controller
         if ($validator->fails()) {
             CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
             return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
-        } else {
-            $client = $this->clientDao->save($request->all());
-            
+        }
+        $client = $this->clientDao->save($request->all());
+        if($client){
             CustomLog::debug($this->class, $metodo, json_encode($client));
             return new ClientResource($client);
+        } else {
+            CustomLog::debug($this->class, $metodo, json_encode($client));
+            return response()->json(Constants::RESPONSE_SERVER_ERROR, Constants::CODE_SERVER_ERROR);
         }
 
     }

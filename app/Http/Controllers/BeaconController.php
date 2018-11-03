@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Sdc\Repositories\BeaconRepositoryInterface;
 use Illuminate\Http\Request;
-use App\Client;
-use App\Campaign;
-use App\Beacon;
 use App\Http\Resources\BeaconsResource;
 use App\Http\Resources\BeaconResource;
-
+use App\Sdc\Utilities\CustomLog;
+use App\Sdc\Utilities\Constants;
+use Illuminate\Support\Facades\Validator;
 
 
 class BeaconController extends Controller
 {
+    protected $class = "BeaconController";
+    protected $beaconDao;
+
+    public function __construct(BeaconRepositoryInterface $beaconDao){
+        $this->beaconDao = $beaconDao;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +27,9 @@ class BeaconController extends Controller
     public function index()
     {
         //
-		return new BeaconsResource(Beacon::get());
+        $metodo = "index";
+        CustomLog::debug($this->class, $metodo, json_encode($this->beaconDao->retrieveAll()));
+		return new BeaconsResource($this->beaconDao->retrieveAll());
     }
 
     /**
@@ -32,17 +40,26 @@ class BeaconController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $beacon = new Beacon;
-		$beacon->hw_id = $request->input('hw_id');
-		$beacon->alias = $request->input('alias');
-        $beacon->ubicacion = $request->input('ubicacion');
-        if($request->input('client_id') != null){
-            $beacon->client_id = $request->input('client_id');
+        $metodo = "store";
+
+        $validator = Validator::make($request->all(), [
+            'hw_id' => 'required',
+            'alias' => 'required',
+            'ubicacion' => 'required'
+        ]);
+
+        if($validator->fails()){
+            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
+            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
         }
-		if($beacon->save()){
-			return new BeaconResource($beacon);
-		}
+        $beacon = $this->beaconDao->save($request->all());
+        if($beacon){
+            CustomLog::debug($this->class, $metodo, json_encode($beacon));
+            return new BeaconResource($beacon);
+        } else {
+            CustomLog::debug($this->class, $metodo, json_encode($beacon));
+            return response()->json(Constants::RESPONSE_SERVER_ERROR, Constants::CODE_SERVER_ERROR);
+        }
     }
 
     /**
@@ -51,10 +68,18 @@ class BeaconController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Beacon $beacon)
+    public function show(int $id)
     {
         //
-        return new BeaconResource($beacon);
+        $metodo = "show";
+
+        $beacon = $this->beaconDao->retrieveById($id);
+        CustomLog::debug($this->class, $metodo, json_encode($beacon));
+        if($beacon){
+            return new BeaconResource($beacon);
+        } else {
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+        }
 
     }
 
@@ -68,25 +93,27 @@ class BeaconController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $update_beacon = Beacon::findOrFail($id);
-        $update_beacon->hw_id = $request->hw_id;
-		$update_beacon->alias = $request->alias;
-        $update_beacon->ubicacion = $request->ubicacion;
-        if($request->client_id != null){
-            $update_beacon->client_id = $request->client_id;
+        $metodo = "update";
+        $validator = Validator::make($request->all(), [
+            'hw_id' => 'required',
+            'alias' => 'required',
+            'ubicacion' => 'required'
+        ]);
+
+        if($validator->fails()){
+            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
+            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
         }
-        if($request->campaign_id != null){
-            $campaign = \App\Campaign::find($request->campaign_id);
-            if($campaign->client_id == $update_beacon->client_id){
-                $update_beacon->campaign_id = $request->campaign_id;
-            } else {
-                // Poner log despues
-            }
-            
+
+        $beacon = $this->beaconDao->update($request->all(), $id);
+        if($beacon){
+            CustomLog::debug($this->class, $metodo, json_encode($beacon));
+            return new BeaconResource($beacon);
+        } else {
+            CustomLog::debug($this->class, $metodo, json_encode($beacon));
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
         }
-		if($update_beacon->save()){
-			return new BeaconResource($update_beacon);
-		}
+
     }
 
     /**
@@ -95,11 +122,16 @@ class BeaconController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Beacon $beacon)
+    public function destroy(int $id)
     {
-        //
-        $beacon->delete();
+        $metodo = "destroy";
 
-		return response()->json('Deleted', 204);
+        if($this->beaconDao->delete($id)){
+            CustomLog::debug($this->class, $metodo, "Se elimino el beacon: ".$id);
+            return response()->json(Constants::RESPONSE_DELETE, Constants::CODE_DELETE);
+        } else {
+            CustomLog::debug($this->class, $metodo, "No existe el beacon: ".$id);
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+        }
     }
 }

@@ -3,12 +3,12 @@
 namespace App\Sdc\Repositories;
 
 use App\Client;
-use Illuminate\Support\Facades\Hash;
 use App\Sdc\Utilities\CustomLog;
 
 class ClientRepositoryImpl implements ClientRepositoryInterface
 {
     protected $class = "ClientRepositoryImpl";
+    protected $client;
 
     public function __construct(){
         $this->client = new Client();
@@ -31,11 +31,12 @@ class ClientRepositoryImpl implements ClientRepositoryInterface
     public function save(array $data){
         $metodo = "save";
         CustomLog::debug($this->class, $metodo, json_encode($data));
-        $this->client->name = $data['name'];
-        $this->client->ruc = $data['ruc'];
-        $this->client->description = $data['description'];
         try{
+            $this->client->name = $data['name'];
+            $this->client->ruc = $data['ruc'];
+            $this->client->description = $data['description'];
             $this->client->save();
+            CustomLog::debug($this->class, $metodo, "Se guardo el cliente: ".json_encode($this->client));
             return $this->client;
         } 
         catch(Exception $ex) {

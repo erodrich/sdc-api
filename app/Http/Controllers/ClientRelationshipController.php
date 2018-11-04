@@ -79,7 +79,7 @@ class ClientRelationshipController extends Controller
         $beacon = $this->beaconDao->retrieveClientBeacon($client, $beacon);
         CustomLog::debug($this->class, $metodo, json_encode($beacon));
         if($beacon){
-            return new CampaignResource($beacon);
+            return new BeaconResource($beacon);
         } else {
             return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
         }

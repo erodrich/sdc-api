@@ -3,6 +3,7 @@
 namespace App\Sdc\Repositories;
 
 use App\Beacon;
+use App\Client;
 use App\Sdc\Utilities\CustomLog;
 
 class BeaconRepositoryImpl implements BeaconRepositoryInterface
@@ -83,6 +84,11 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
         }
     }
 
+    /**
+     * @param int $id
+     * @return bool
+     * @throws \Exception
+     */
     public function delete(int $id)
     {
         $this->beacon = $this->beacon->find($id);
@@ -108,7 +114,7 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
     {
         try{
             $client = Client::find($client);
-            $beacon = $client ? $client->campaigns()->find($id) : null;
+            $beacon = $client ? $client->beacons()->find($id) : null;
             if($beacon){
                 return $beacon;
             }

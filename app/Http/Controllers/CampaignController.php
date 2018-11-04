@@ -116,7 +116,7 @@ class CampaignController extends Controller
         $campaign = $this->campaignDao->update($request->all(), $id);
         if($campaign){
             CustomLog::debug($this->class, $metodo, json_encode($campaign));
-            return new BeaconResource($campaign);
+            return new CampaignResource($campaign);
         } else {
             CustomLog::debug($this->class, $metodo, json_encode($campaign));
             return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);

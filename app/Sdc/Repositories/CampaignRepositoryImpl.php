@@ -65,8 +65,8 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
         try{
             $client = Client::findOrFail($data['client_id']);
             if($client){
-                $campaign = $client->campaigns()->find($id);
-                if($campaign){
+                $this->campaign = $client->campaigns()->find($id);
+                if($this->campaign){
                     $this->campaign->name = $data['name'];
                     $this->campaign->start_date = $data['start_date'];
                     $this->campaign->end_date = $data['end_date'];

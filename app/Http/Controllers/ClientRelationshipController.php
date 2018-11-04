@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Sdc\Repositories\BeaconRepositoryInterface;
 use App\Sdc\Repositories\CampaignRepositoryInterface;
 use App\Sdc\Utilities\CustomLog;
-use App\Client;
-use App\Beacon;
 use App\Http\Resources\BeaconsResource;
 use App\Http\Resources\BeaconResource;
 use App\Http\Resources\CampaignResource;
@@ -35,12 +33,17 @@ class ClientRelationshipController extends Controller
 
 
     //
-    public function campaigns(Client $client)
+    public function campaigns(int $client)
     {
         $metodo = 'campaigns';
         $campaigns = $this->campaignDao->retrieveClientCampaigns($client);
         CustomLog::debug($this->class, $metodo, json_encode($campaigns));
-        return new CampaignsResource($campaigns);
+        if($campaigns){
+            return new CampaignsResource($campaigns);
+        } else {
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+        }
+
         
     }
 
@@ -58,14 +61,14 @@ class ClientRelationshipController extends Controller
 
     }
 
-    public function beacons(Client $client)
+    public function beacons(int $client)
     {
         $method = 'beacons';
         $this->log->debug($method, $client->beacons);
         return new BeaconsResource($client->beacons);
     }
 
-    public function beacon(Client $client, Beacon $beacon)
+    public function beacon(int $client, int $beacon)
     {
         $method = 'beacon';
         $result = $client->beacons->find($beacon->id);

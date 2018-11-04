@@ -4,6 +4,7 @@ namespace App\Sdc\Repositories;
 
 use App\Campaign;
 use App\Client;
+use App\Sdc\Utilities\CustomLog;
 
 class CampaignRepositoryImpl implements CampaignRepositoryInterface
 {
@@ -31,7 +32,30 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
 
     public function save(array $data)
     {
-        // TODO: Implement save() method.
+        //
+        $metodo = "save";
+        CustomLog::debug($this->class, $metodo, json_encode($data));
+
+        $client = Client::find($data['client_id']);
+        if($client){
+            try{
+                $this->campaign->name = $data['name'];
+                $this->campaign->start_date = $data['start_date'];
+                $this->campaign->end_date = $data['end_date'];
+                $this->campaign->active = $data['active'] == 1 ? true : false;
+                $client->campaigns()->save($this->campaign);
+                $this->campaign->save();
+                CustomLog::debug($this->class, $metodo, "Se guardo la campaña: ".json_encode($this->campaign));
+                return $this->campaign;
+            }
+            catch(Exception $ex) {
+                CustomLog::error($this->class, $metodo, json_encode($ex));
+                return null;
+            }
+        } else {
+            return null;
+        }
+
     }
 
     public function update(array $data, int $id)
@@ -46,10 +70,11 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
 
     //By Client methods
 
-    public function retrieveClientCampaigns(Client $client)
+    public function retrieveClientCampaigns(int $client)
     {
         try{
-            $campaigns = $client->campaigns()->orderBy('id','desc')->get();
+            $client = Client::find($client);
+            $campaigns = $client ? $client->campaigns()->orderBy('id','desc')->get() : null;
             return $campaigns;
         } catch (Exception $ex) {
             return null;
@@ -60,7 +85,7 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
     {
         try{
             $client = Client::find($client);
-            $campaign = $client->campaigns()->find($id);
+            $campaign = $client ? $client->campaigns()->find($id) : null;
             if($campaign){
                 return $campaign;
             }

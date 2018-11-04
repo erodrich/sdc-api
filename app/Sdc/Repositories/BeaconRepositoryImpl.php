@@ -38,7 +38,7 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
             $this->beacon->hw_id = $data['hw_id'];
             $this->beacon->alias = $data['alias'];
             $this->beacon->ubicacion = $data['ubicacion'];
-            if(array_key_exists('clien_id', $data)){
+            if(array_key_exists('client_id', $data)){
                 $this->beacon->client_id = $data['client_id'];
             }
             $this->beacon->save();

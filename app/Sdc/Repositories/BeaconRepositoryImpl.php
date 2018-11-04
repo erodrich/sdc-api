@@ -92,4 +92,28 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
         }
         return false;
     }
+
+    public function retrieveClientBeacons(int $client)
+    {
+        try{
+            $client = Client::find($client);
+            $beacons = $client ? $client->beacons()->orderBy('id','desc')->get() : null;
+            return $beacons;
+        } catch (Exception $ex) {
+            return null;
+        }
+    }
+
+    public function retrieveClientBeacon(int $client, int $id)
+    {
+        try{
+            $client = Client::find($client);
+            $beacon = $client ? $client->campaigns()->find($id) : null;
+            if($beacon){
+                return $beacon;
+            }
+        } catch (Exception $ex) {
+            return null;
+        }
+    }
 }

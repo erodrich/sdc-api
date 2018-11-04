@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Campaign;
-use App\Client;
 use App\Http\Resources\CampaignResource;
 use App\Sdc\Utilities\Constants;
 use App\Sdc\Utilities\CustomLog;
@@ -100,23 +98,28 @@ class CampaignController extends Controller
     public function update(Request $request, $id)
     {
         //
-        
-        $client = \App\Client::find($request->client_id);
-        if($client){
-            $campaign = $client->campaigns()->find($id);
-            if($campaign){
-                $campaign->name = $request->name;
-                $campaign->start_date = $request->start_date;
-                $campaign->end_date = $request->end_date;
-                $campaign->active = $request->active;
-                $client->campaigns()->save($campaign);
-                $campaign->save();
-                return new CampaignResource($campaign);
-            } else {
-                return response()->json('No existe la campaña', 400);
-            }
+        $metodo = "update";
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'active' => 'required',
+            'client_id' => 'required'
+        ]);
+
+        if($validator->fails()){
+            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
+            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
+        }
+
+        $campaign = $this->campaignDao->update($request->all(), $id);
+        if($campaign){
+            CustomLog::debug($this->class, $metodo, json_encode($campaign));
+            return new BeaconResource($campaign);
         } else {
-            return response()->json('No existe el cliente', 400);
+            CustomLog::debug($this->class, $metodo, json_encode($campaign));
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
         }
 
         
@@ -130,12 +133,15 @@ class CampaignController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $campaign = Campaign::find($id);
+        $metodo = "destroy";
+
+        $campaign = $this->campaignDao->delete($id);
         if($campaign){
-            $campaign->delete();
-            return response()->json('Elemento eliminado', 200);
+            CustomLog::debug($this->class, $metodo, "Se elimino el beacon: ".$id);
+            return response()->json(Constants::RESPONSE_DELETE, Constants::CODE_DELETE);
+        } else {
+            CustomLog::debug($this->class, $metodo, "No existe el beacon: ".$id);
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
         }
-        return response()->json('No existe la campaña', 40);
     }
 }

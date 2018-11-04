@@ -60,12 +60,41 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
 
     public function update(array $data, int $id)
     {
-        // TODO: Implement update() method.
+        $metodo = "update";
+        CustomLog::debug($this->class, $metodo, json_encode($data));
+        try{
+            $client = Client::findOrFail($data['client_id']);
+            if($client){
+                $campaign = $client->campaigns()->find($id);
+                if($campaign){
+                    $this->campaign->name = $data['name'];
+                    $this->campaign->start_date = $data['start_date'];
+                    $this->campaign->end_date = $data['end_date'];
+                    $this->campaign->active = $data['active'] == 1 ? true : false;
+                    $client->campaigns()->save($this->campaign);
+                    $this->campaign->save();
+                    CustomLog::debug($this->class, $metodo, "Se guardo la campaña: ".json_encode($this->campaign));
+                    return $this->campaign;
+                }else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } catch (Exception $ex){
+            return null;
+        }
+
     }
 
     public function delete(int $id)
     {
-        // TODO: Implement delete() method.
+        $this->campaign = $this->campaign->find($id);
+        if($this->campaign){
+            $this->campaign->delete();
+            return true;
+        }
+        return false;
     }
 
     //By Client methods

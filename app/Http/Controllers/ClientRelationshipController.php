@@ -63,20 +63,26 @@ class ClientRelationshipController extends Controller
 
     public function beacons(int $client)
     {
-        $method = 'beacons';
-        $this->log->debug($method, $client->beacons);
-        return new BeaconsResource($client->beacons);
+        $metodo = 'beacons';
+        $beacons = $this->beaconDao->retrieveClientBeacons($client);
+        CustomLog::debug($this->class, $metodo, json_encode($beacons));
+        if($beacons){
+            return new BeaconsResource($beacons);
+        } else {
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+        }
     }
 
     public function beacon(int $client, int $beacon)
     {
-        $method = 'beacon';
-        $result = $client->beacons->find($beacon->id);
-        if($result){
-            $this->log->debug($method, $result);
-            return new BeaconResource($result);
+        $metodo = 'beacon';
+        $beacon = $this->beaconDao->retrieveClientBeacon($client, $beacon);
+        CustomLog::debug($this->class, $metodo, json_encode($beacon));
+        if($beacon){
+            return new CampaignResource($beacon);
+        } else {
+            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
         }
-        return ['data' => []];
 
     }
 }

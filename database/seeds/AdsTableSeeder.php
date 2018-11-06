@@ -25,6 +25,7 @@ class AdsTableSeeder extends Seeder
                 'campaign_id' => $campaign->random()->first()->id,
                 'video_url' => "https://www.youtube.com/watch?v=YN2URsx8gIs",
                 'link_url' => "http://www.google.com",
+                'content' => $faker->text(),
 			]);
 		}
     }

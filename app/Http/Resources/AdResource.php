@@ -21,6 +21,7 @@ class AdResource extends JsonResource
             'attributes' => [
                 'title' => $this->title,
                 'description' => $this->description,
+                'content' => $this->content,
                 'image_full_name' => $this->image_full_name,
                 'image_full_url' => $this->image_full_url,
                 'image_pre_name' => $this->image_pre_name,

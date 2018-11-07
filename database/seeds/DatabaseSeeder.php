@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ClientTableSeeder::class,
             BeaconsTableSeeder::class,
-            //CampaignsTableSeeder::class,
-            //AdsTableSeeder::class,
+            CampaignsTableSeeder::class,
+            AdsTableSeeder::class,
             UsersTableSeeder::class,
         ]);
     }

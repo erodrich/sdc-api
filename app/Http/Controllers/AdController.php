@@ -69,6 +69,7 @@ class AdController extends Controller
                 $ad = new \App\Ad;
                 $ad->title = $request->title;
                 $ad->description = $request->description;
+                $ad->content = $request->content;
                 $ad->image_full_name = $image_full ? $image_full['name'] : null;
                 $ad->image_full_url = $image_full ? $image_full['url'] : null;
                 $ad->image_full_public_id = $image_full ? $image_full['public_id'] : null;
@@ -129,6 +130,7 @@ class AdController extends Controller
                 if($ad){
                     $ad->title = $request->title;
                     $ad->description = $request->description;
+                    $ad->content = $request->content;
                     $ad->image_full_name = $image_full ? $image_full['name'] : $ad->image_full_name;
                     $ad->image_full_url = $image_full ? $image_full['url'] : $ad->image_full_url;
                     $ad->image_full_public_id = $image_full ? $image_full['public_id'] : $ad->image_full_public_id;

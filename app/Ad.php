@@ -30,15 +30,15 @@ class Ad extends Model
         try {
             $file = \Illuminate\Http\UploadedFile::createFromBase($request[$image_type]);
             $result['name'] = $file->getClientOriginalName();
-            $image_pre = $file->getRealPath();
-            Cloudder::upload($image_pre, null);
-            list($width, $height) = getimagesize($image_pre);
+            $image = $file->getRealPath();
+            Cloudder::upload($image, null);
+            list($width, $height) = getimagesize($image);
             $result['public_id'] = Cloudder::getPublicId();
             $result['url'] = Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
             CustomLog::debug($this->class, $metodo, "Se cargo imagen: " . $result['name'] . " a Cloudinary.");
         } catch (Exception $ex) {
             CustomLog::debug($this->class, $metodo, "Error al procesar imagen");
-            return $result;
+            return null;
         }
 
         return $result;

@@ -79,11 +79,52 @@ class AdRepositoryImpl implements AdRepositoryInterface
 
     public function update(array $data, int $id)
     {
-        // TODO: Implement update() method.
+        $method = "update";
+
+        $image_pre = $this->ad->uploadImage($data, 'image_pre');
+        $image_full = $this->ad->uploadImage($data, 'image_full');
+
+        CustomLog::debug($this->class, $metodo, json_encode($data));
+
+        try {
+            $campaign = \App\Campaign::find($data['campaign_id']);
+            if ($campaign) {
+                $this->ad = $campaign-ads()->find($id);
+                if($this->ad){
+                    $this->ad->title = $data['title'];
+                    $this->ad->description = $data['description'];
+                    $this->ad->content = $data['content'];
+                    $this->ad->image_full_name = $image_full ? $image_full['name'] : null;
+                    $this->ad->image_full_url = $image_full ? $image_full['url'] : null;
+                    $this->ad->image_full_public_id = $image_full ? $image_full['public_id'] : null;
+                    $this->ad->image_pre_name = $image_pre ? $image_pre['name'] : null;
+                    $this->ad->image_pre_url = $image_pre ? $image_pre['url'] : null;
+                    $this->ad->image_pre_public_id = $image_pre ? $image_pre['public_id'] : null;
+                    $this->ad->video_url = $data['video_url'];
+                    $this->ad->link_url = $data['link_url'];
+                    $campaign->ads()->save($this->ad);
+                    return $this->ad;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } catch (Exception $ex) {
+            return null;
+        }
+
+
+
     }
 
     public function delete(int $id)
     {
-        // TODO: Implement delete() method.
+        $this->ad = $this->ad->find($id);
+        if($this->ad){
+            $this->ad->delete();
+            return true;
+        }
+        return false;
     }
 }

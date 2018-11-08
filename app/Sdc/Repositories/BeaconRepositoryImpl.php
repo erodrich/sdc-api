@@ -5,6 +5,7 @@ namespace App\Sdc\Repositories;
 use App\Beacon;
 use App\Client;
 use App\Sdc\Utilities\CustomLog;
+use Exception;
 
 class BeaconRepositoryImpl implements BeaconRepositoryInterface
 {

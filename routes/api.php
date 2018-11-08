@@ -31,7 +31,7 @@ Route::apiResource('beacons', 'BeaconController');
 Route::apiResource('ads', 'AdController');
 
 
-//Clients - Campaigns 
+/**  Clients - Campaigns  */
 Route::get(
     'clients/{client}/relationships/campaigns',
     [

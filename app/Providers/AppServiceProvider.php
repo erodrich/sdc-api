@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Sdc\Repositories\AdRepositoryImpl;
 use App\Sdc\Repositories\CampaignRepositoryImpl;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
@@ -32,17 +33,20 @@ class AppServiceProvider extends ServiceProvider
     {
         // Inversion of control
         // Instructing the app classes to inject
-        $this->app->bind('App\Sdc\Repositories\UserRepositoryInterface', function() {
+        $this->app->bind('App\Sdc\Repositories\UserRepositoryInterface', function () {
             return new UserRepositoryImpl;
         });
-        $this->app->bind('App\Sdc\Repositories\ClientRepositoryInterface', function() {
+        $this->app->bind('App\Sdc\Repositories\ClientRepositoryInterface', function () {
             return new ClientRepositoryImpl;
         });
-        $this->app->bind('App\Sdc\Repositories\BeaconRepositoryInterface', function() {
+        $this->app->bind('App\Sdc\Repositories\BeaconRepositoryInterface', function () {
             return new BeaconRepositoryImpl;
         });
-        $this->app->bind('App\Sdc\Repositories\CampaignRepositoryInterface', function() {
+        $this->app->bind('App\Sdc\Repositories\CampaignRepositoryInterface', function () {
             return new CampaignRepositoryImpl;
+        });
+        $this->app->bind('App\Sdc\Repositories\AdRepositoryInterface', function () {
+            return new AdRepositoryImpl;
         });
     }
 }

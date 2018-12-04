@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ErrorResource;
+use App\Sdc\Business\ClientBusiness;
+use App\Sdc\Utilities\ErrorDeleteResponse;
+use App\Sdc\Utilities\ErrorNotFoundResponse;
+use App\Sdc\Utilities\ErrorServerResponse;
+use App\Sdc\Utilities\ErrorValidationResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientsResource;
@@ -14,23 +21,25 @@ class ClientController extends Controller
 {
 
     protected $class = "ClientController";
+    private $clientBusiness;
 
     public function __construct(ClientRepositoryInterface $clientDao){
-        $this->clientDao = $clientDao;
+        $this->clientBusiness = new ClientBusiness($clientDao);
 
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return ClientsResource
      */
     public function index()
     {
         $metodo = "index";
+        $clients = $this->clientBusiness->retrieveAll();
 
-        CustomLog::debug($this->class, $metodo, json_encode($this->clientDao->retrieveAll()));
-        return new ClientsResource($this->clientDao->retrieveAll());
+        CustomLog::debug($this->class, $metodo, json_encode($clients));
+        return new ClientsResource($clients);
 
     }
 
@@ -38,7 +47,7 @@ class ClientController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResource
      */
     public function store(Request $request)
     {
@@ -50,18 +59,21 @@ class ClientController extends Controller
             'ruc' => 'required',
             'description' => 'required'
         ]);
-         
+
         if ($validator->fails()) {
             CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
-            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
+            $errorValidation = new ErrorValidationResponse();
+            return response()->json(new ErrorResource($errorValidation), $errorValidation->status);
+
         }
-        $client = $this->clientDao->save($request->all());
+        $client = $this->clientBusiness->save($request->all());
         if($client){
             CustomLog::debug($this->class, $metodo, json_encode($client));
             return new ClientResource($client);
         } else {
             CustomLog::debug($this->class, $metodo, json_encode($client));
-            return response()->json(Constants::RESPONSE_SERVER_ERROR, Constants::CODE_SERVER_ERROR);
+            $errorServer = new ErrorServerResponse();
+            return response()->json(new ErrorResource($errorServer), $errorServer->status);
         }
 
     }
@@ -70,20 +82,22 @@ class ClientController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResource
      */
     public function show($id)
     {
         $metodo = "show";
-        
-        $client = $this->clientDao->retrieveById($id);
+
+        //$client = $this->clientDao->retrieveById($id);
+        $client = $this->clientBusiness->retrieveById($id);
         CustomLog::debug($this->class, $metodo, json_encode($client));
         if($client){
             return new ClientResource($client);
         } else {
-            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
-        
+
     }
 
     /**
@@ -91,7 +105,7 @@ class ClientController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResource
      */
     public function update(Request $request, $id)
     {
@@ -103,18 +117,20 @@ class ClientController extends Controller
             'ruc' => 'required',
             'description' => 'required'
         ]);
-        
+
         if ($validator->fails()) {
             CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
-            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
+            $errorValidation = new ErrorValidationResponse();
+            return response()->json(new ErrorResource($errorValidation), $errorValidation->status);
         } else {
-            $client = $this->clientDao->update($request->all(), $id);
+            $client = $this->clientBusiness->update($request->all(), $id);
             if($client){
                 return new ClientResource($client);
             } else {
-                return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+                $errorNotFound = new ErrorNotFoundResponse();
+                return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
             }
-            
+
         }
 
     }
@@ -129,14 +145,16 @@ class ClientController extends Controller
     {
         //
         $metodo = "destroy";
-        
-        if($this->clientDao->delete($id)){
+
+        if($this->clientBusiness->delete($id)){
             CustomLog::debug($this->class, $metodo, "Se elimino el cliente: ".$id);
-            return response()->json(Constants::RESPONSE_DELETE, Constants::CODE_DELETE);
+            $errorDelete = new ErrorDeleteResponse();
+            return response()->json(new ErrorResource($errorDelete), $errorDelete->status);
         } else {
             CustomLog::debug($this->class, $metodo, "No existe el cliente: ".$id);
-            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
-		
+
     }
 }

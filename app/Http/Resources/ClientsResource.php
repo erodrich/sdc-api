@@ -21,42 +21,5 @@ class ClientsResource extends ResourceCollection
             'data' => ClientResource::collection($this->collection),
         ];
     }
-/*
-    public function with($request)
-    {
-        $campaigns = $this->collection->flatMap(
-            function ($client) {
-                return $client->campaigns;
-            }
-        );
-        $beacons = $this->collection->flatMap(
-            function ($client) {
-                return $client->beacons;
-            }
-        );
-        
-        $included = $beacons->merge($campaigns)->unique('id');
 
-        return [
-            'links' => [
-                'self' => route('clients.index'),
-            ],
-            'included' => $this->withIncluded($included),
-        ];
-    }
-    
-    private function withIncluded(Collection $included)
-    {
-        return $included->map(
-            function ($include) {
-                if ($include instanceof Campaign) {
-                    return new CampaignResource($include);
-                }
-                if ($include instanceof Beacon) {
-                    return new BeaconResource($include);
-                }
-            }
-        );
-    }
-    */
 }

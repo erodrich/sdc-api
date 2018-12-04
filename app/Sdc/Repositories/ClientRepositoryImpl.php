@@ -4,6 +4,7 @@ namespace App\Sdc\Repositories;
 
 use App\Client;
 use App\Sdc\Utilities\CustomLog;
+use Exception;
 
 class ClientRepositoryImpl implements ClientRepositoryInterface
 {
@@ -25,7 +26,7 @@ class ClientRepositoryImpl implements ClientRepositoryInterface
         } catch (Exception $ex) {
             return null;
         }
-        
+
     }
 
     public function save(array $data){
@@ -38,19 +39,19 @@ class ClientRepositoryImpl implements ClientRepositoryInterface
             $this->client->save();
             CustomLog::debug($this->class, $metodo, "Se guardo el cliente: ".json_encode($this->client));
             return $this->client;
-        } 
+        }
         catch(Exception $ex) {
             CustomLog::error($this->class, $metodo, json_encode($ex));
-            return null; 
+            return null;
         }
 
-        
+
     }
 
     public function update(array $data, int $id){
         $metodo = "update";
         CustomLog::debug($this->class, $metodo, "Input: ".json_encode($data));
-        
+
         try{
             $this->client = $this->client->findOrFail($id);
             if($this->client){
@@ -64,10 +65,10 @@ class ClientRepositoryImpl implements ClientRepositoryInterface
                 CustomLog::debug($this->class, $metodo, "No existe el cliente: ".$id);
                 return null;
             }
-        } 
+        }
         catch(Exception $ex) {
             CustomLog::error($this->class, $metodo, json_encode($ex));
-            return null; 
+            return null;
         }
     }
 

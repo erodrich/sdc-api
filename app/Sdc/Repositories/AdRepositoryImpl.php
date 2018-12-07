@@ -55,7 +55,7 @@ class AdRepositoryImpl implements AdRepositoryInterface
                 $this->ad = new \App\Ad;
                 $this->ad->title = $data['title'];
                 $this->ad->description = $data['description'];
-                $this->ad->content = $data['content'];
+                $this->ad->body = $data['body'];
                 $this->ad->image_full_name = $image_full ? $image_full['name'] : null;
                 $this->ad->image_full_url = $image_full ? $image_full['url'] : null;
                 $this->ad->image_full_public_id = $image_full ? $image_full['public_id'] : null;
@@ -79,7 +79,7 @@ class AdRepositoryImpl implements AdRepositoryInterface
 
     public function update(array $data, int $id)
     {
-        $method = "update";
+        $metodo = "update";
 
         $image_pre = $this->ad->uploadImage($data, 'image_pre');
         $image_full = $this->ad->uploadImage($data, 'image_full');
@@ -93,7 +93,7 @@ class AdRepositoryImpl implements AdRepositoryInterface
                 if($this->ad){
                     $this->ad->title = $data['title'];
                     $this->ad->description = $data['description'];
-                    $this->ad->content = $data['content'];
+                    $this->ad->body = $data['body'];
                     $this->ad->image_full_name = $image_full ? $image_full['name'] : null;
                     $this->ad->image_full_url = $image_full ? $image_full['url'] : null;
                     $this->ad->image_full_public_id = $image_full ? $image_full['public_id'] : null;

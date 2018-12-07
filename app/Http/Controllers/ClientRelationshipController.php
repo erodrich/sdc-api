@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ErrorResource;
+use App\Sdc\Business\CampaignBusiness;
 use App\Sdc\Repositories\BeaconRepositoryInterface;
 use App\Sdc\Repositories\CampaignRepositoryInterface;
+use App\Sdc\Responses\ErrorNotFoundResponse;
 use App\Sdc\Utilities\CustomLog;
 use App\Http\Resources\BeaconsResource;
 use App\Http\Resources\BeaconResource;
@@ -16,7 +19,7 @@ class ClientRelationshipController extends Controller
 
     protected $class = "ClientRelationshipController";
     protected $beaconDao;
-    protected $campaignDao;
+    protected $campaignBusiness;
 
     public $log;
 
@@ -28,7 +31,7 @@ class ClientRelationshipController extends Controller
     public function __construct(CampaignRepositoryInterface $campaignDao, BeaconRepositoryInterface $beaconDao)
     {
         $this->beaconDao = $beaconDao;
-        $this->campaignDao = $campaignDao;
+        $this->campaignBusiness = new CampaignBusiness($campaignDao);
     }
 
 
@@ -36,26 +39,28 @@ class ClientRelationshipController extends Controller
     public function campaigns(int $client)
     {
         $metodo = 'campaigns';
-        $campaigns = $this->campaignDao->retrieveClientCampaigns($client);
+        $campaigns = $this->campaignBusiness->retrieveClientCampaigns($client);
         CustomLog::debug($this->class, $metodo, json_encode($campaigns));
         if($campaigns){
             return new CampaignsResource($campaigns);
         } else {
-            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
 
-        
+
     }
 
     public function campaign(int $client, int $campaign)
     {
         $metodo = 'campaign';
-        $campaign = $this->campaignDao->retrieveClientCampaign($client, $campaign);
+        $campaign = $this->campaignBusiness->retrieveClientCampaign($client, $campaign);
         CustomLog::debug($this->class, $metodo, json_encode($campaign));
         if($campaign){
             return new CampaignResource($campaign);
         } else {
-            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
 
 

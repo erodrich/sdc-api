@@ -19,4 +19,42 @@ class CampaignBusiness
     {
         $this->campaignDao = $campaignDao;
     }
+
+    public function retrieveAll()
+    {
+        $campaigns = $this->campaignDao->retrieveAll();
+        return $campaigns;
+    }
+
+    public function save($data)
+    {
+        $campaign = $this->campaignDao->save($data);
+        return $campaign;
+    }
+
+    public function retrieveById($id)
+    {
+        $campaign = $this->campaignDao->retrieveById($id);
+        return $campaign;
+    }
+
+    public function update($data, $id)
+    {
+        $campaign = $this->campaignDao->update($data, $id);
+        return $campaign;
+    }
+
+    public function delete($id){
+        return $this->campaignDao->delete($id);
+    }
+
+    public function retrieveClientCampaigns(int $client)
+    {
+        return $this->campaignDao->retrieveClientCampaigns($client);
+    }
+
+    public function retrieveClientCampaign(int $client, int $campaign)
+    {
+        return $this->campaignDao->retrieveClientCampaign($client, $campaign);
+    }
 }

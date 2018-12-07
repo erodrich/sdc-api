@@ -6,8 +6,10 @@
  * Time: 7:32 PM
  */
 
-namespace App\Sdc\Utilities;
+namespace App\Sdc\Responses;
 
+
+use App\Sdc\Utilities\Constants;
 
 class ErrorNotFoundResponse extends ErrorResponse
 {

@@ -6,7 +6,7 @@
  * Time: 6:36 PM
  */
 
-namespace App\Sdc\Utilities;
+namespace App\Sdc\Responses;
 
 
 abstract class ErrorResponse

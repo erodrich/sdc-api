@@ -9,12 +9,7 @@ use Exception;
 
 class Ad extends Model
 {
-    private $class;
-
-    public function __construct()
-    {
-        $this->class = "Ad";
-    }
+    private $class = "Ad";
 
     public function campaign()
     {

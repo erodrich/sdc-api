@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Sdc\Utilities\Constants;
+use App\Http\Resources\ErrorResource;
+use App\Http\Resources\GenericResource;
+use App\Sdc\Business\AdBusiness;
+use App\Sdc\Responses\DeleteResponse;
+use App\Sdc\Responses\ErrorNotFoundResponse;
+use App\Sdc\Responses\ErrorServerResponse;
+use App\Sdc\Responses\ErrorValidationResponse;
 use App\Sdc\Utilities\CustomLog;
 use Illuminate\Http\Request;
 use App\Http\Resources\AdResource;
 use Illuminate\Support\Facades\Validator;
 use App\Sdc\Repositories\AdRepositoryInterface;
-use Exception;
 
 /**
  * @property AdRepositoryInterface adDao
@@ -16,19 +21,21 @@ use Exception;
 class AdController extends Controller
 {
     protected $class = "AdController";
-    protected $adDao;
+    protected $adBusiness;
 
     public function __construct(AdRepositoryInterface $adDao)
     {
-        $this->adDao = $adDao;
+        $this->adBusiness = new AdBusiness($adDao);
     }
 
-    public function index(int $campaign)
+    public function index()
     {
-        //
-		$ads = $this->adDao->retrieveAds($campaign);
-		return AdResource::collection($ads);
-		
+        $metodo = "index";
+
+        $ads = $this->adBusiness->retrieveAll();
+        CustomLog::debug($this->class, $metodo, json_encode($ads));
+        return AdResource::collection($ads);
+
     }
 
     public function store(Request $request)
@@ -38,18 +45,20 @@ class AdController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
         ]);
-        if($validator->fails()){
-            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
-            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
+        if ($validator->fails()) {
+            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: " . json_encode($request->all()));
+            $errorValidation = new ErrorValidationResponse();
+            return response()->json(new ErrorResource($errorValidation), $errorValidation->status);
         }
-        $ad = $this->adDao->save($request->all());
-        if($ad){
+        $ad = $this->adBusiness->save($request->all());
+        if ($ad) {
             CustomLog::debug($this->class, $metodo, json_encode($ad));
-            return response()->json($ad);
-            //return new AdResource($ad);
+            //return response()->json($ad);
+            return new AdResource($ad);
         } else {
             CustomLog::debug($this->class, $metodo, json_encode($ad));
-            return response()->json(Constants::RESPONSE_SERVER_ERROR, Constants::CODE_SERVER_ERROR);
+            $errorServer = new ErrorServerResponse();
+            return response()->json(new ErrorResource($errorServer), $errorServer->status);
         }
 
     }
@@ -60,12 +69,13 @@ class AdController extends Controller
         //
         $metodo = "show";
 
-        $ad = $this->adDao->retrieveById($ad);
+        $ad = $this->adBusiness->retrieveById($ad);
         CustomLog::debug($this->class, $metodo, json_encode($ad));
-        if($ad){
+        if ($ad) {
             return new AdResource($ad);
         } else {
-            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
 
     }
@@ -73,62 +83,43 @@ class AdController extends Controller
 
     public function update(Request $request, $id)
     {
+        $metodo = 'store';
 
-            
-        $method = 'store';
-        $image_pre = null;
-        if($request->file('image_pre')){
-            $image_pre = $this->uploadImage($request, 'image_pre');
-        }
-        $image_full = null;
-        if($request->file('image_full')){
-            $image_full = $this->uploadImage($request, 'image_full');
-        }
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+        ]);
 
-        $campaign = \App\Campaign::find($request->campaign_id);
-        try{
-            if($campaign){
-                $ad = $campaign->ads()->find($id);
-                if($ad){
-                    $ad->title = $request->title;
-                    $ad->description = $request->description;
-                    $ad->content = $request->content;
-                    $ad->image_full_name = $image_full ? $image_full['name'] : $ad->image_full_name;
-                    $ad->image_full_url = $image_full ? $image_full['url'] : $ad->image_full_url;
-                    $ad->image_full_public_id = $image_full ? $image_full['public_id'] : $ad->image_full_public_id;
-                    $ad->image_pre_name = $image_pre ? $image_pre['name'] : $ad->image_pre_name;
-                    $ad->image_pre_url = $image_pre ? $image_pre['url'] : $ad->image_pre_url;
-                    $ad->image_pre_public_id = $image_pre ? $image_pre['public_id'] : $ad->image_pre_public_id;
-                    $ad->video_url = $request->video_url;
-                    $ad->link_url = $request->link_url;
-                    $campaign->ads()->save($ad);
-                    $ad->save();
-                    return new AdResource($ad);
-                } else {
-                    return response()->json('El anuncio no existe', 400);
-                }
+        if ($validator->fails()) {
+            CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
+            $errorValidation = new ErrorValidationResponse();
+            return response()->json(new ErrorResource($errorValidation), $errorValidation->status);
+        } else {
+            $ad = $this->adBusiness->update($request->all(), $id);
+            if($ad){
+                return new AdResource($ad);
             } else {
-                return response()->json('La campaña no existe', 400); 
+                $errorNotFound = new ErrorNotFoundResponse();
+                return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
             }
-        } catch (Exception $ex) {
-            $this->log->debug($method, 'Error: '.$ex);
+
         }
-		
+
     }
 
 
     public function destroy($id)
     {
-        //
-        $ad = \App\Ad::find($id);
-        if($ad){
-            Cloudder::destroyImage($ad->image_pre_public_id, null);
-            Cloudder::delete($ad->image_pre_public_id, null);
-            Cloudder::destroyImage($ad->image_full_public_id, null);
-            Cloudder::delete($ad->image_full_public_id, null);
-            $ad->delete();
-            return response()->json('Elemento eliminado', 204);
-        }		
-		
+        $metodo = "destroy";
+
+        if($this->adBusiness->delete($id)){
+            CustomLog::debug($this->class, $metodo, "Se elimino el cliente: ".$id);
+            $deleteResponse = new DeleteResponse();
+            return response()->json(new GenericResource($deleteResponse), $deleteResponse->status);
+        } else {
+            CustomLog::debug($this->class, $metodo, "No existe el cliente: ".$id);
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
+        }
+
     }
 }

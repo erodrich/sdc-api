@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\GenericResource;
 use App\Sdc\Business\ClientBusiness;
-use App\Sdc\Utilities\ErrorDeleteResponse;
-use App\Sdc\Utilities\ErrorNotFoundResponse;
-use App\Sdc\Utilities\ErrorServerResponse;
-use App\Sdc\Utilities\ErrorValidationResponse;
+use App\Sdc\Responses\DeleteResponse;
+use App\Sdc\Responses\ErrorNotFoundResponse;
+use App\Sdc\Responses\ErrorServerResponse;
+use App\Sdc\Responses\ErrorValidationResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 use App\Http\Resources\ClientResource;
@@ -15,7 +16,6 @@ use App\Http\Resources\ClientsResource;
 use Illuminate\Support\Facades\Validator;
 use App\Sdc\Repositories\ClientRepositoryInterface;
 use App\Sdc\Utilities\CustomLog;
-use App\Sdc\Utilities\Constants;
 
 class ClientController extends Controller
 {
@@ -88,7 +88,6 @@ class ClientController extends Controller
     {
         $metodo = "show";
 
-        //$client = $this->clientDao->retrieveById($id);
         $client = $this->clientBusiness->retrieveById($id);
         CustomLog::debug($this->class, $metodo, json_encode($client));
         if($client){
@@ -148,8 +147,8 @@ class ClientController extends Controller
 
         if($this->clientBusiness->delete($id)){
             CustomLog::debug($this->class, $metodo, "Se elimino el cliente: ".$id);
-            $errorDelete = new ErrorDeleteResponse();
-            return response()->json(new ErrorResource($errorDelete), $errorDelete->status);
+            $deleteResponse = new DeleteResponse();
+            return response()->json(new GenericResource($deleteResponse), $deleteResponse->status);
         } else {
             CustomLog::debug($this->class, $metodo, "No existe el cliente: ".$id);
             $errorNotFound = new ErrorNotFoundResponse();

@@ -5,6 +5,7 @@ namespace App\Sdc\Repositories;
 use App\Campaign;
 use App\Client;
 use App\Sdc\Utilities\CustomLog;
+use Exception;
 
 class CampaignRepositoryImpl implements CampaignRepositoryInterface
 {
@@ -42,7 +43,7 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
                 $this->campaign->name = $data['name'];
                 $this->campaign->start_date = $data['start_date'];
                 $this->campaign->end_date = $data['end_date'];
-                $this->campaign->active = $data['active'] == 1 ? true : false;
+                $this->campaign->active = $data['active'];
                 $client->campaigns()->save($this->campaign);
                 $this->campaign->save();
                 CustomLog::debug($this->class, $metodo, "Se guardo la campaña: ".json_encode($this->campaign));

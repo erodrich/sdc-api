@@ -13,9 +13,9 @@ class AddContenidoToAdsTable extends Migration
      */
     public function up()
     {
-        //        
+        //
         Schema::table('ads', function($table) {
-            $table->text('content')->nullable();
+            $table->text('body')->nullable();
         });
     }
 
@@ -27,7 +27,7 @@ class AddContenidoToAdsTable extends Migration
     public function down()
     {
         Schema::table('ads', function($table) {
-            $table->dropColumn('content');
+            $table->dropColumn('body');
         });
     }
 }

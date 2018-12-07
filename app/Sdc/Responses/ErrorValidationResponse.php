@@ -6,8 +6,10 @@
  * Time: 6:41 PM
  */
 
-namespace App\Sdc\Utilities;
+namespace App\Sdc\Responses;
 
+
+use App\Sdc\Utilities\Constants;
 
 class ErrorValidationResponse extends ErrorResponse
 {

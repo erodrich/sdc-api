@@ -6,10 +6,11 @@
  * Time: 7:43 PM
  */
 
-namespace App\Sdc\Utilities;
+namespace App\Sdc\Responses;
 
+use App\Sdc\Utilities\Constants;
 
-class ErrorDeleteResponse extends ErrorResponse
+class DeleteResponse extends ErrorResponse
 {
     public function __construct()
     {

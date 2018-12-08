@@ -142,7 +142,6 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        //
         $metodo = "destroy";
 
         if($this->clientBusiness->delete($id)){

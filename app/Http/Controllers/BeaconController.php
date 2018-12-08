@@ -2,41 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ErrorResource;
+use App\Http\Resources\GenericResource;
+use App\Sdc\Business\BeaconBusiness;
 use App\Sdc\Repositories\BeaconRepositoryInterface;
+use App\Sdc\Responses\DeleteResponse;
+use App\Sdc\Responses\ErrorNotFoundResponse;
+use App\Sdc\Responses\ErrorServerResponse;
+use App\Sdc\Responses\ErrorValidationResponse;
 use Illuminate\Http\Request;
 use App\Http\Resources\BeaconsResource;
 use App\Http\Resources\BeaconResource;
 use App\Sdc\Utilities\CustomLog;
-use App\Sdc\Utilities\Constants;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Validator;
 
 
 class BeaconController extends Controller
 {
     protected $class = "BeaconController";
-    protected $beaconDao;
+    protected $beaconBusiness;
 
     public function __construct(BeaconRepositoryInterface $beaconDao){
-        $this->beaconDao = $beaconDao;
+        $this->beaconBusiness = new BeaconBusiness($beaconDao);
     }
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResource
      */
     public function index()
     {
         //
         $metodo = "index";
-        CustomLog::debug($this->class, $metodo, json_encode($this->beaconDao->retrieveAll()));
-		return new BeaconsResource($this->beaconDao->retrieveAll());
+        $beacons = $this->beaconBusiness->retrieveAll();
+        CustomLog::debug($this->class, $metodo, json_encode($beacons));
+		return new BeaconsResource($beacons);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResource
      */
     public function store(Request $request)
     {
@@ -45,20 +53,21 @@ class BeaconController extends Controller
         $validator = Validator::make($request->all(), [
             'hw_id' => 'required',
             'alias' => 'required',
-            'ubicacion' => 'required'
         ]);
 
         if($validator->fails()){
             CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
-            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
+            $errorValidation = new ErrorValidationResponse();
+            return response()->json(new ErrorResource($errorValidation), $errorValidation->status);
         }
-        $beacon = $this->beaconDao->save($request->all());
+        $beacon = $this->beaconBusiness->save($request->all());
         if($beacon){
             CustomLog::debug($this->class, $metodo, json_encode($beacon));
             return new BeaconResource($beacon);
         } else {
             CustomLog::debug($this->class, $metodo, json_encode($beacon));
-            return response()->json(Constants::RESPONSE_SERVER_ERROR, Constants::CODE_SERVER_ERROR);
+            $errorServer = new ErrorServerResponse();
+            return response()->json(new ErrorResource($errorServer), $errorServer->status);
         }
     }
 
@@ -66,19 +75,20 @@ class BeaconController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResource
      */
     public function show(int $id)
     {
         //
         $metodo = "show";
 
-        $beacon = $this->beaconDao->retrieveById($id);
+        $beacon = $this->beaconBusiness->retrieveById($id);
         CustomLog::debug($this->class, $metodo, json_encode($beacon));
         if($beacon){
             return new BeaconResource($beacon);
         } else {
-            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
 
     }
@@ -88,7 +98,7 @@ class BeaconController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResource
      */
     public function update(Request $request, $id)
     {
@@ -97,22 +107,23 @@ class BeaconController extends Controller
         $validator = Validator::make($request->all(), [
             'hw_id' => 'required',
             'alias' => 'required',
-            'ubicacion' => 'required'
         ]);
 
         if($validator->fails()){
             CustomLog::debug($this->class, $metodo, "Fallo en la validacion de: ".json_encode($request->all()));
-            return response()->json(Constants::RESPONSE_BAD_REQUEST, Constants::CODE_BAD_REQUEST);
+            $errorValidation = new ErrorValidationResponse();
+            return response()->json(new ErrorResource($errorValidation), $errorValidation->status);
+        } else {
+            $beacon = $this->beaconBusiness->update($request->all(), $id);
+            if($beacon){
+                return new BeaconResource($beacon);
+            } else {
+                $errorNotFound = new ErrorNotFoundResponse();
+                return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
+            }
         }
 
-        $beacon = $this->beaconDao->update($request->all(), $id);
-        if($beacon){
-            CustomLog::debug($this->class, $metodo, json_encode($beacon));
-            return new BeaconResource($beacon);
-        } else {
-            CustomLog::debug($this->class, $metodo, json_encode($beacon));
-            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
-        }
+
 
     }
 
@@ -120,18 +131,20 @@ class BeaconController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResource
      */
     public function destroy(int $id)
     {
         $metodo = "destroy";
 
-        if($this->beaconDao->delete($id)){
+        if($this->beaconBusiness->delete($id)){
             CustomLog::debug($this->class, $metodo, "Se elimino el beacon: ".$id);
-            return response()->json(Constants::RESPONSE_DELETE, Constants::CODE_DELETE);
+            $deleteResponse = new DeleteResponse();
+            return response()->json(new GenericResource($deleteResponse), $deleteResponse->status);
         } else {
             CustomLog::debug($this->class, $metodo, "No existe el beacon: ".$id);
-            return response()->json(Constants::RESPONSE_NOT_FOUND, Constants::CODE_BAD_REQUEST);
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
     }
 }

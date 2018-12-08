@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ErrorResource;
 use App\Sdc\Business\AdBusiness;
+use App\Sdc\Business\BeaconBusiness;
 use App\Sdc\Repositories\AdRepositoryInterface;
+use App\Sdc\Repositories\BeaconRepositoryInterface;
 use App\Sdc\Responses\ErrorNotFoundResponse;
 use Illuminate\Http\Request;
 use App\Http\Resources\AdsResource;
@@ -14,17 +16,18 @@ use App\Http\Resources\BeaconResource;
 use App\Sdc\Utilities\CustomLog;
 use App\Campaign;
 use App\Client;
-use App\Ad;
 use App\Beacon;
 
 class CampaignRelationshipController extends Controller
 {
     protected $class = "CampaignRelationshipController";
     protected $adBusiness;
+    protected $beaconBusiness;
 
-    public function __construct(AdRepositoryInterface $adDao)
+    public function __construct(AdRepositoryInterface $adDao, BeaconRepositoryInterface $beaconDao)
     {
         $this->adBusiness = new AdBusiness($adDao);
+        $this->beaconBusiness = new BeaconBusiness($beaconDao);
     }
 
     //Client/Campaign/Ads
@@ -55,19 +58,27 @@ class CampaignRelationshipController extends Controller
     }
 
     //Client/Campaign/Beacons
-    public function beacons(Client $client, Campaign $campaign)
+    public function beacons(int $client, int $campaign)
     {
-        if($campaign->client_id == $client->id){
-            $beacons = $campaign->beacons;
+        $metodo = "beacons";
+        $beacons = $this->beaconBusiness->retrieveCampaignBeacons($client, $campaign);
+        CustomLog::debug($this->class, $metodo, json_encode($beacons));
+        if($beacons){
             return new BeaconsResource($beacons);
+        } else {
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
-        return ['data' => []];
     }
-    public function beacon(Client $client, Campaign $campaign, Beacon $beacon){
-        if($campaign->client_id == $client->id){
-            $beacons = $campaign->beacons->find($beacon->id);
-            return new BeaconsResource($beacons);
+    public function beacon(int $client, int $campaign, int $beacon){
+        $metodo = "beacon";
+        $beacon = $this->beaconBusiness->retrieveCampaignBeacon($client, $campaign, $beacon);
+        CustomLog::debug($this->class, $metodo, json_encode($beacon));
+        if($beacon){
+            return new BeaconResource($beacon);
+        } else {
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
-        return ['data' => []];
     }
 }

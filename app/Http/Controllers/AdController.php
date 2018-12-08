@@ -53,7 +53,6 @@ class AdController extends Controller
         $ad = $this->adBusiness->save($request->all());
         if ($ad) {
             CustomLog::debug($this->class, $metodo, json_encode($ad));
-            //return response()->json($ad);
             return new AdResource($ad);
         } else {
             CustomLog::debug($this->class, $metodo, json_encode($ad));

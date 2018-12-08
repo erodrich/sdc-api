@@ -21,10 +21,10 @@ class AdRepositoryImpl implements AdRepositoryInterface
     public function retrieveCampaignAds(int $client, int $campaign)
     {
         $method = "retrieveCampaignAds";
-        try{
+        try {
             $client = Client::find($client);
             $campaign = $client ? $client->campaigns()->find($campaign) : null;
-            $ads = $campaign ? $campaign->ads()->orderBy('id','desc')->get() : null;
+            $ads = $campaign ? $campaign->ads()->orderBy('id', 'desc')->get() : null;
             return $ads;
         } catch (Exception $ex) {
             return null;
@@ -35,7 +35,7 @@ class AdRepositoryImpl implements AdRepositoryInterface
     public function retrieveCampaignAd(int $client, int $campaign, int $ad)
     {
         $method = "retrieveCampaignAd";
-        try{
+        try {
             $client = Client::find($client);
             $campaign = $client ? $client->campaigns()->find($campaign) : null;
             $ad = $campaign ? $campaign->ads()->find($ad) : null;
@@ -63,33 +63,35 @@ class AdRepositoryImpl implements AdRepositoryInterface
     {
         $method = 'store';
 
-        $image_pre = $this->ad->uploadImage($data, 'image_pre');
-        $image_full = $this->ad->uploadImage($data, 'image_full');
-
-        $campaign = \App\Campaign::find($data['campaign_id']);
+        $campaign = Campaign::find($data['campaign_id']);
         try {
             if ($campaign) {
-                $this->ad = new \App\Ad;
+                if ($data['image_pre']) {
+                    $image_pre = $this->ad->uploadImage($data, 'image_pre');
+                    $this->ad->image_pre_name = $image_pre ? $image_pre['name'] : null;
+                    $this->ad->image_pre_url = $image_pre ? $image_pre['url'] : null;
+                    $this->ad->image_pre_public_id = $image_pre ? $image_pre['public_id'] : null;
+                }
+                if ($data['image_full']) {
+                    $image_full = $this->ad->uploadImage($data, 'image_full');
+                    $this->ad->image_full_name = $image_full ? $image_full['name'] : null;
+                    $this->ad->image_full_url = $image_full ? $image_full['url'] : null;
+                    $this->ad->image_full_public_id = $image_full ? $image_full['public_id'] : null;
+                }
                 $this->ad->title = $data['title'];
                 $this->ad->description = $data['description'];
                 $this->ad->body = $data['body'];
-                $this->ad->image_full_name = $image_full ? $image_full['name'] : null;
-                $this->ad->image_full_url = $image_full ? $image_full['url'] : null;
-                $this->ad->image_full_public_id = $image_full ? $image_full['public_id'] : null;
-                $this->ad->image_pre_name = $image_pre ? $image_pre['name'] : null;
-                $this->ad->image_pre_url = $image_pre ? $image_pre['url'] : null;
-                $this->ad->image_pre_public_id = $image_pre ? $image_pre['public_id'] : null;
                 $this->ad->video_url = $data['video_url'];
                 $this->ad->link_url = $data['link_url'];
                 $campaign->ads()->save($this->ad);
                 $this->ad->save();
                 return $this->ad;
             } else {
-                return response()->json('La campaña no existe', 400);
+                return null;
             }
         } catch (Exception $ex) {
-            //$this->log->debug($method, 'Error: ' . $ex);
             CustomLog::error($this->class, $method, $ex->getMessage());
+            return null;
         }
 
     }
@@ -98,29 +100,33 @@ class AdRepositoryImpl implements AdRepositoryInterface
     {
         $metodo = "update";
 
-        $image_pre = $this->ad->uploadImage($data, 'image_pre');
-        $image_full = $this->ad->uploadImage($data, 'image_full');
-
         CustomLog::debug($this->class, $metodo, json_encode($data));
 
         try {
-            $campaign = \App\Campaign::find($data['campaign_id']);
+            $campaign = Campaign::find($data['campaign_id']);
             if ($campaign) {
-                $this->ad = $campaign-ads()->find($id);
-                if($this->ad){
-                    $this->ad->title = $data['title'];
-                    $this->ad->description = $data['description'];
-                    $this->ad->body = $data['body'];
-                    $this->ad->image_full_name = $image_full ? $image_full['name'] : null;
-                    $this->ad->image_full_url = $image_full ? $image_full['url'] : null;
-                    $this->ad->image_full_public_id = $image_full ? $image_full['public_id'] : null;
-                    $this->ad->image_pre_name = $image_pre ? $image_pre['name'] : null;
-                    $this->ad->image_pre_url = $image_pre ? $image_pre['url'] : null;
-                    $this->ad->image_pre_public_id = $image_pre ? $image_pre['public_id'] : null;
-                    $this->ad->video_url = $data['video_url'];
-                    $this->ad->link_url = $data['link_url'];
-                    $campaign->ads()->save($this->ad);
-                    return $this->ad;
+                $ad = $campaign->ads()->find($id);
+                if ($ad) {
+                    if ($data['image_pre']) {
+                        $image_pre = $this->ad->uploadImage($data, 'image_pre');
+                        $ad->image_pre_name = $image_pre ? $image_pre['name'] : null;
+                        $ad->image_pre_url = $image_pre ? $image_pre['url'] : null;
+                        $ad->image_pre_public_id = $image_pre ? $image_pre['public_id'] : null;
+                    }
+                    if ($data['image_full']) {
+                        $image_full = $this->ad->uploadImage($data, 'image_full');
+                        $ad->image_full_name = $image_full ? $image_full['name'] : null;
+                        $ad->image_full_url = $image_full ? $image_full['url'] : null;
+                        $ad->image_full_public_id = $image_full ? $image_full['public_id'] : null;
+                    }
+                    $ad->title = $data['title'];
+                    $ad->description = $data['description'];
+                    $ad->body = $data['body'];
+                    $ad->video_url = $data['video_url'];
+                    $ad->link_url = $data['link_url'];
+                    $campaign->ads()->save($ad);
+                    $ad->save();
+                    return $ad;
                 } else {
                     return null;
                 }
@@ -132,13 +138,12 @@ class AdRepositoryImpl implements AdRepositoryInterface
         }
 
 
-
     }
 
     public function delete(int $id)
     {
         $this->ad = $this->ad->find($id);
-        if($this->ad){
+        if ($this->ad) {
             $this->ad->delete();
             return true;
         }

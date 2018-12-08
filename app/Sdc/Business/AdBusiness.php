@@ -59,4 +59,14 @@ class AdBusiness
         return $this->adDao->delete($id);
     }
 
+    public function retrieveCampaignAds(int $client, int $campaign)
+    {
+        return $this->adDao->retrieveCampaignAds($client, $campaign);
+    }
+
+    public function retrieveCampaignAd(int $client, int $campaign, int $ad)
+    {
+        return $this->adDao->retrieveCampaignAd($client, $campaign, $ad);
+    }
+
 }

@@ -3,10 +3,10 @@
 namespace App\Sdc\Repositories;
 
 use App\Ad;
+use App\Campaign;
+use App\Client;
 use App\Sdc\Utilities\CustomLog;
 use Exception;
-use Illuminate\Http\File;
-use Zend\Diactoros\UploadedFile;
 
 class AdRepositoryImpl implements AdRepositoryInterface
 {
@@ -20,12 +20,29 @@ class AdRepositoryImpl implements AdRepositoryInterface
 
     public function retrieveCampaignAds(int $client, int $campaign)
     {
-        // TODO: Implement retrieveCampaignAds() method.
+        $method = "retrieveCampaignAds";
+        try{
+            $client = Client::find($client);
+            $campaign = $client ? $client->campaigns()->find($campaign) : null;
+            $ads = $campaign ? $campaign->ads()->orderBy('id','desc')->get() : null;
+            return $ads;
+        } catch (Exception $ex) {
+            return null;
+        }
+
     }
 
     public function retrieveCampaignAd(int $client, int $campaign, int $ad)
     {
-        // TODO: Implement retrieveCampaignAd() method.
+        $method = "retrieveCampaignAd";
+        try{
+            $client = Client::find($client);
+            $campaign = $client ? $client->campaigns()->find($campaign) : null;
+            $ad = $campaign ? $campaign->ads()->find($ad) : null;
+            return $ad;
+        } catch (Exception $ex) {
+            return null;
+        }
     }
 
     public function retrieveAll()

@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ErrorResource;
+use App\Sdc\Business\AdBusiness;
+use App\Sdc\Repositories\AdRepositoryInterface;
+use App\Sdc\Responses\ErrorNotFoundResponse;
 use Illuminate\Http\Request;
 use App\Http\Resources\AdsResource;
 use App\Http\Resources\AdResource;
 use App\Http\Resources\BeaconsResource;
 use App\Http\Resources\BeaconResource;
+use App\Sdc\Utilities\CustomLog;
 use App\Campaign;
 use App\Client;
 use App\Ad;
@@ -14,25 +19,39 @@ use App\Beacon;
 
 class CampaignRelationshipController extends Controller
 {
-    //Client/Campaign/Ads
-    public function ads(Client $client, Campaign $campaign)
+    protected $class = "CampaignRelationshipController";
+    protected $adBusiness;
+
+    public function __construct(AdRepositoryInterface $adDao)
     {
-        
-        if($campaign->client_id == $client->id){
-            $ads = $campaign->ads;
-            return new AdsResource($ads);
-        }
-        return ['data' => []];
-        
+        $this->adBusiness = new AdBusiness($adDao);
     }
-    public function ad(Client $client, Campaign $campaign, Ad $ad){
-        if($campaign->client_id == $client->id){
-            $ad = $campaign->ads->find($ad->id);
-            if($ad){
-                return new AdResource($ad);
-            }
+
+    //Client/Campaign/Ads
+    public function ads(int $client, int $campaign)
+    {
+        $metodo = "ads";
+        $ads = $this->adBusiness->retrieveCampaignAds($client, $campaign);
+        CustomLog::debug($this->class, $metodo, json_encode($ads));
+        if($ads){
+            return new AdsResource($ads);
+        } else {
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }
-        return ['data' => []];
+
+
+    }
+    public function ad(int $client, int $campaign, int $ad){
+        $metodo = "ad";
+        $ad = $this->adBusiness->retrieveCampaignAd($client, $campaign, $ad);
+        CustomLog::debug($this->class, $metodo, json_encode($ad));
+        if($ad){
+            return new AdResource($ad);
+        } else {
+            $errorNotFound = new ErrorNotFoundResponse();
+            return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
+        }
     }
 
     //Client/Campaign/Beacons

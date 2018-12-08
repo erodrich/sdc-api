@@ -21,7 +21,6 @@ class ClientRelationshipController extends Controller
     protected $beaconDao;
     protected $campaignBusiness;
 
-    public $log;
 
     /**
      * ClientRelationshipController constructor.

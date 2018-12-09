@@ -8,8 +8,11 @@
 
 namespace App\Sdc\Business;
 
+use App\Beacon;
 use App\Sdc\Repositories\AdRepositoryInterface;
+use App\Sdc\Utilities\CustomLog;
 use JD\Cloudder\Facades\Cloudder;
+use Exception;
 
 class AdBusiness
 {
@@ -67,6 +70,22 @@ class AdBusiness
     public function retrieveCampaignAd(int $client, int $campaign, int $ad)
     {
         return $this->adDao->retrieveCampaignAd($client, $campaign, $ad);
+    }
+
+    public function deliverAd($id){
+        $metodo = "deliverAd";
+        $beacon = Beacon::where('hw_id', '=', $id)->first();
+        if($beacon){
+            try{
+                /* Logica para conseguir el anuncio a mostrar */
+                $ad = $beacon->campaign()->first()->ads()->first();
+                return $ad;
+            }
+            catch (Exception $ex){
+                CustomLog::error($this->class, $metodo, $ex->getMessage());
+                return null;
+            }
+        }
     }
 
 }

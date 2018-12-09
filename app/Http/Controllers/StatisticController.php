@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Exception;
 
 class StatisticController extends Controller
 {
@@ -17,7 +18,7 @@ class StatisticController extends Controller
             $stat->action = strtolower($request->action);
             $stat->fecha_hora = $request->fecha_hora;
             $stat->save();
-            return response()->json('Dato agregado', 400); 
+            return response()->json('Dato agregado', 200);
         } catch (Exception $ex) {
             $this->log->debug($ex);
         }

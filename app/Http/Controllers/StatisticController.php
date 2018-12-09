@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Sdc\Utilities\CustomLog;
 use Exception;
 
 class StatisticController extends Controller
 {
-    //
+    private $class = "StatisticController";
     public function store(Request $request){
+        $metodo = "store";
         try{
             $stat = new \App\Statistic;
             $stat->user_id = $request->user_id;
@@ -20,7 +22,7 @@ class StatisticController extends Controller
             $stat->save();
             return response()->json('Dato agregado', 200);
         } catch (Exception $ex) {
-            $this->log->debug($ex);
+            CustomLog::error($this->class, $metodo, $ex->getMessage());
         }
     }
 

@@ -6,7 +6,6 @@ use App\Ad;
 use App\Campaign;
 use App\Client;
 use App\Sdc\Utilities\CustomLog;
-use Exception;
 
 class AdRepositoryImpl implements AdRepositoryInterface
 {
@@ -105,15 +104,18 @@ class AdRepositoryImpl implements AdRepositoryInterface
         try {
             $campaign = Campaign::find($data['campaign_id']);
             if ($campaign) {
+                CustomLog::debug($this->class, $metodo, "Campaign: ".json_encode($campaign));
                 $ad = $campaign->ads()->find($id);
                 if ($ad) {
-                    if ($data['image_pre']) {
+                    CustomLog::debug($this->class, $metodo, "Ad: ".json_encode($ad));
+
+                    if (array_key_exists('image_pre', $data)) {
                         $image_pre = $this->ad->uploadImage($data, 'image_pre');
                         $ad->image_pre_name = $image_pre ? $image_pre['name'] : null;
                         $ad->image_pre_url = $image_pre ? $image_pre['url'] : null;
                         $ad->image_pre_public_id = $image_pre ? $image_pre['public_id'] : null;
                     }
-                    if ($data['image_full']) {
+                    if (array_key_exists('image_full', $data)) {
                         $image_full = $this->ad->uploadImage($data, 'image_full');
                         $ad->image_full_name = $image_full ? $image_full['name'] : null;
                         $ad->image_full_url = $image_full ? $image_full['url'] : null;
@@ -134,6 +136,7 @@ class AdRepositoryImpl implements AdRepositoryInterface
                 return null;
             }
         } catch (Exception $ex) {
+            CustomLog::debug($this->class, $metodo, $ex->getMessage());
             return null;
         }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CampaignResource;
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\GenericResource;
 use App\Sdc\Business\CampaignBusiness;
 use App\Sdc\Responses\DeleteResponse;
 use App\Sdc\Responses\ErrorNotFoundResponse;
@@ -148,11 +149,11 @@ class CampaignController extends Controller
 
         $campaign = $this->campaignBusiness->delete($id);
         if($campaign){
-            CustomLog::debug($this->class, $metodo, "Se elimino el beacon: ".$id);
+            CustomLog::debug($this->class, $metodo, "Se elimino la campaña: ".$id);
             $deleteResponse = new DeleteResponse();
             return response()->json(new GenericResource($deleteResponse), $deleteResponse->status);
         } else {
-            CustomLog::debug($this->class, $metodo, "No existe el beacon: ".$id);
+            CustomLog::debug($this->class, $metodo, "No existe la campaña: ".$id);
             $errorNotFound = new ErrorNotFoundResponse();
             return response()->json(new ErrorResource($errorNotFound), $errorNotFound->status);
         }

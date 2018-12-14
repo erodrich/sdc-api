@@ -21,7 +21,7 @@ class CampaignResource extends JsonResource
                 'name' => $this->name,
                 'start_date' => $this->start_date,
                 'end_date' => $this->end_date,
-                'active' => $this->active,
+                'active' => boolval($this->active) ? true : false,
             ],
             'relationships' => new CampaignRelationshipResource($this),
             'links' => [

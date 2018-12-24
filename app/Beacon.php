@@ -11,4 +11,9 @@ class Beacon extends Model
     {
         return $this->belongsTo('App\Campaign');
     }
+
+    public function client()
+    {
+        return $this->belongsTo('App\Client');
+    }
 }

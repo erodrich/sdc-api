@@ -36,6 +36,7 @@ class AppBusiness
                 }
                 
                 $response->client_id = $beacon->client_id;
+                $response->beacon_id = $beacon->id;
                 $response->ad = $ad;
                 CustomLog::debug($this->class, $metodo, json_encode($response));
                 return $response;

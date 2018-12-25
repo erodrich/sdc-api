@@ -9,6 +9,7 @@ use Exception;
 class StatisticController extends Controller
 {
     private $class = "StatisticController";
+
     public function store(Request $request){
         $metodo = "store";
         try{

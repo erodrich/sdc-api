@@ -13,8 +13,10 @@ use Illuminate\Http\Request;
 |
  */
 Route::get('getad/{id}', 'AppController@deliverAd');
+Route::get('statistics/overview/client/{client_id}','AppController@overview');
+Route::get('statistics/search','AppController@search');
 Route::post('statistics', 'StatisticController@store');
-Route::get('statistics', 'StatisticController@index');
+//Route::get('statistics', 'StatisticController@index');
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

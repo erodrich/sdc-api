@@ -10,6 +10,7 @@ namespace App\Sdc\Business;
 
 use App\Beacon;
 use App\DeliveredData;
+use App\Sdc\Repositories\ClientRepositoryInterface;
 use App\Sdc\Utilities\CustomLog;
 use Exception;
 
@@ -17,11 +18,12 @@ class AppBusiness
 {
 
     protected $class = "AppBusiness";
+    protected $clientDao;
 
 
-    public function __construct()
+    public function __construct(ClientRepositoryInterface $clientDao)
     {
-
+        $this->clientDao = $clientDao;
     }
 
     public function deliverAd($id){
@@ -34,7 +36,7 @@ class AppBusiness
                 if($beacon->campaign()->first()->ads()->first()){
                     $ad = $beacon->campaign()->first()->ads()->first();
                 }
-                
+
                 $response->client_id = $beacon->client_id;
                 $response->beacon_id = $beacon->id;
                 $response->ad = $ad;
@@ -42,7 +44,7 @@ class AppBusiness
                 return $response;
             }
             catch (Exception $ex){
-                
+
                 CustomLog::error($this->class, $metodo, $ex->getMessage());
                 return null;
             }
@@ -50,6 +52,28 @@ class AppBusiness
             CustomLog::debug($this->class, $metodo, "No campaigns");
             return null;
         }
+    }
+
+    public function getOverview(int $client_id){
+        $metodo = 'getOverview';
+        $response = null;
+        try{
+            $client = $this->clientDao->retrieveById($client_id);
+            if($client){
+                $response = new DeliveredData();
+                $response->campaigns = $client->campaigns()->with('ads');
+
+            }
+        } catch (Exception $ex) {
+
+        }
+
+    }
+
+    public function search($request){
+        $metodo = 'search';
+
+
     }
 
 }

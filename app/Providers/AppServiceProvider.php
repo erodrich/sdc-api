@@ -48,5 +48,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('App\Sdc\Repositories\AdRepositoryInterface', function () {
             return new AdRepositoryImpl;
         });
+        $this->app->bind(AppBusiness::class, function() {
+            return new AppBusiness();
+        });
     }
 }

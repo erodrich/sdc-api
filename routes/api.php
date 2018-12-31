@@ -13,8 +13,8 @@ use Illuminate\Http\Request;
 |
  */
 Route::get('getad/{id}', 'AppController@deliverAd');
-Route::get('statistics/overview/client/{client_id}','AppController@overview');
-Route::get('statistics/search','AppController@search');
+Route::get('statistics/client/{client_id}/overview','AppController@overview');
+Route::get('statistics/client/{client_id}/search','AppController@search');
 Route::post('statistics', 'StatisticController@store');
 //Route::get('statistics', 'StatisticController@index');
 

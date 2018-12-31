@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OverviewResource;
 use App\Sdc\Business\AppBusiness;
 use App\Sdc\Repositories\AdRepositoryImpl;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,10 +36,11 @@ class AppController extends Controller
 
     public function overview($client_id){
         $metodo = 'overview';
-        //$var1 = Input::get("client_id");
+
         $response = $this->appBusiness->getOverview($client_id);
         if($response){
             CustomLog::debug($this->class, $metodo, json_encode($response));
+            return new OverviewResource($response);
         } else {
             $error = new ErrorNotFoundResponse();
             return new ErrorResource($error);

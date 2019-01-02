@@ -10,7 +10,6 @@ namespace App\Sdc\Business;
 
 use App\Beacon;
 use App\Sdc\Repositories\AdRepositoryInterface;
-use App\Sdc\Utilities\CustomLog;
 use JD\Cloudder\Facades\Cloudder;
 use Exception;
 

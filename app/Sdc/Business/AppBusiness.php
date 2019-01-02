@@ -12,19 +12,23 @@ use App\Beacon;
 use App\DeliveredData;
 use App\Overview;
 use App\Sdc\Repositories\ClientRepositoryInterface;
+use App\Sdc\Repositories\InteractionRepositoryInterface;
 use App\Sdc\Utilities\CustomLog;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 
 class AppBusiness
 {
 
     protected $class = "AppBusiness";
     protected $clientDao;
+    protected $interactionBusiness;
 
 
-    public function __construct(ClientRepositoryInterface $clientDao)
+    public function __construct(ClientRepositoryInterface $clientDao, InteractionRepositoryInterface $interactionDao)
     {
         $this->clientDao = $clientDao;
+        $this->interactionBusiness = new InteractionBusiness($interactionDao);
     }
 
     public function deliverAd($id)
@@ -77,8 +81,6 @@ class AppBusiness
                     }
 
                 }
-                //$response->viewed_ads =
-                //$response->emitted_reports
                 return $response;
             }
         } catch (Exception $ex) {
@@ -88,10 +90,37 @@ class AppBusiness
 
     }
 
-    public function search($request)
+    public function search($client_id, $params_array)
     {
         $metodo = 'search';
 
+        $response = array();
+
+        try{
+            $interactions = $this->interactionBusiness->retrieveByParams($client_id, $params_array);
+
+            if($interactions){
+
+                foreach($interactions as $interaction){
+                    $deliveredData = new DeliveredData();
+                    $deliveredData['id'] = $interaction->id;
+                    $deliveredData['campaign'] = $interaction->campaign()->first();
+                    $deliveredData['ad'] = $interaction->ad()->first();
+                    $deliveredData['beacon'] = $interaction->beacon()->first();
+                    $deliveredData['client_id'] = $interaction->client_id;
+                    $deliveredData['action'] = $interaction->action;
+                    $deliveredData['fecha_hora'] = $interaction->fecha_hora;
+                    array_push($response, $deliveredData);
+                }
+
+            }
+
+            return Collection::make($response);
+
+        } catch (Exception $ex){
+            CustomLog::error($this->class, $metodo, $ex->getMessage());
+            return null;
+        }
 
     }
 

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Sdc\Repositories\AdRepositoryImpl;
 use App\Sdc\Repositories\CampaignRepositoryImpl;
+use App\Sdc\Repositories\InteractionRepositoryImpl;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use App\Sdc\Repositories\ClientRepositoryImpl;
@@ -47,6 +48,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind('App\Sdc\Repositories\AdRepositoryInterface', function () {
             return new AdRepositoryImpl;
+        });
+        $this->app->bind('App\Sdc\Repositories\InteractionRepositoryInterface', function () {
+            return new InteractionRepositoryImpl;
         });
         $this->app->bind(AppBusiness::class, function() {
             return new AppBusiness();

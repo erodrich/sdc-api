@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InteractionsResource;
 use App\Http\Resources\OverviewResource;
 use App\Sdc\Business\AppBusiness;
-use App\Sdc\Repositories\AdRepositoryImpl;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\ErrorResource;
 use App\Sdc\Responses\ErrorNotFoundResponse;
@@ -47,15 +47,18 @@ class AppController extends Controller
         }
     }
 
-    public function search(){
-        $metodo = 'overview';
-        //$var1 = Input::get("client_id");
-        $response = $this->appBusiness->search();
+    public function search($client_id){
+        $metodo = 'search';
+        $params = Input::all();
+
+        $response = $this->appBusiness->search($client_id, $params);
         if($response){
             CustomLog::debug($this->class, $metodo, json_encode($response));
+            return new InteractionsResource($response);
         } else {
             $error = new ErrorNotFoundResponse();
             return new ErrorResource($error);
         }
+
     }
 }

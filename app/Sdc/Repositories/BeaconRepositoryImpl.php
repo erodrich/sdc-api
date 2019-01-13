@@ -67,13 +67,19 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
                     $this->beacon->client_id = $data['client_id'];
                 }
                 if (array_key_exists('campaign_id', $data)) {
-                    $campaignDao = new CampaignRepositoryImpl();
-                    $campaign = $campaignDao->retrieveById($data['campaign_id']);
-                    if ($campaign && ($campaign->client_id == $this->beacon->client_id)) {
-                        $this->beacon->campaign_id = $data['campaign_id'];
+                    if (!is_null($data['campaign_id'])){
+                        $campaignDao = new CampaignRepositoryImpl();
+                        $campaign = $campaignDao->retrieveById($data['campaign_id']);
+                        if ($campaign && ($campaign->client_id == $this->beacon->client_id)) {
+                            $this->beacon->campaign_id = $data['campaign_id'];
+                        } else {
+                            CustomLog::debug($this->class, $metodo, "Campaign no existe o no pertence al cliente del beacon");
+                        }
                     } else {
-                        CustomLog::debug($this->class, $metodo, "Campaign no existe o no pertence al cliente del beacon");
+                        $this->beacon->campaign_id = $data['campaign_id'];
+
                     }
+
 
                 }
                 $this->beacon->save();

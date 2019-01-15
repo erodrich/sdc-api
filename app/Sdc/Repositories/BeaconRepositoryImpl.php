@@ -20,7 +20,7 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
 
     public function retrieveAll()
     {
-        return $this->beacon->all();
+        return $this->beacon->all()->paginate(Constants::ITEMS_PER_LIST);
     }
 
     public function retrieveById(int $id)
@@ -111,7 +111,7 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
     {
         try {
             $client = Client::find($client);
-            $beacons = $client ? $client->beacons()->orderBy('id', 'desc')->get() : null;
+            $beacons = $client ? $client->beacons()->orderBy('id', 'desc')->paginate(Constants::ITEMS_PER_LIST) : null;
             return $beacons;
         } catch (Exception $ex) {
             return null;
@@ -137,7 +137,7 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
             $campaign = Campaign::find($campaign);
             if ($campaign && ($campaign->client_id == $client)) {
 
-                return $campaign->beacons()->get();
+                return $campaign->beacons()->paginate(Constants::ITEMS_PER_LIST);
             } else {
                 return null;
             }

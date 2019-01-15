@@ -23,7 +23,7 @@ class AdRepositoryImpl implements AdRepositoryInterface
         try {
             $client = Client::find($client);
             $campaign = $client ? $client->campaigns()->find($campaign) : null;
-            $ads = $campaign ? $campaign->ads()->orderBy('id', 'desc')->get() : null;
+            $ads = $campaign ? $campaign->ads()->orderBy('id', 'desc')->paginate(Constants::ITEMS_PER_LIST) : null;
             return $ads;
         } catch (Exception $ex) {
             return null;

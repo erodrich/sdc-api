@@ -4,6 +4,7 @@ namespace App\Sdc\Repositories;
 
 use App\Client;
 use App\Sdc\Utilities\CustomLog;
+use App\Sdc\Utilities\Constants;
 use Exception;
 
 class ClientRepositoryImpl implements ClientRepositoryInterface
@@ -17,7 +18,7 @@ class ClientRepositoryImpl implements ClientRepositoryInterface
 
     public function retrieveAll(){
 
-        return $this->client->with(['campaigns', 'beacons'])->paginate();
+        return $this->client->with(['campaigns', 'beacons'])->paginate(Constants::ITEMS_PER_LIST);
     }
 
     public function retrieveById(int $id){

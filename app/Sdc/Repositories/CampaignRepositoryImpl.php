@@ -5,6 +5,7 @@ namespace App\Sdc\Repositories;
 use App\Campaign;
 use App\Client;
 use App\Sdc\Utilities\CustomLog;
+use App\Sdc\Utilities\Constants;
 use Exception;
 
 class CampaignRepositoryImpl implements CampaignRepositoryInterface
@@ -19,7 +20,7 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
 
     public function retrieveAll()
     {
-        return $this->campaign->orderBy('id','desc')->get();
+        return $this->campaign->orderBy('id','desc')->paginate(Constants::ITEMS_PER_LIST);
     }
 
     public function retrieveById(int $id)
@@ -104,7 +105,7 @@ class CampaignRepositoryImpl implements CampaignRepositoryInterface
     {
         try{
             $client = Client::find($client);
-            $campaigns = $client ? $client->campaigns()->orderBy('id','desc')->get() : null;
+            $campaigns = $client ? $client->campaigns()->orderBy('id','desc')->paginate(Constants::ITEMS_PER_LIST) : null;
             return $campaigns;
         } catch (Exception $ex) {
             return null;

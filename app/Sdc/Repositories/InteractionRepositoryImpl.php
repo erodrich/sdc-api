@@ -18,7 +18,7 @@ class InteractionRepositoryImpl implements InteractionRepositoryInterface
 
     public function retrieveAll(){
 
-        return $this->interaction->all();
+        return $this->interaction->all()->paginate(Constants::ITEMS_PER_LIST);
     }
 
     public function retrieveById(int $id){
@@ -40,7 +40,7 @@ class InteractionRepositoryImpl implements InteractionRepositoryInterface
                 }
             }
 
-            return $interactions->get();
+            return $interactions->paginate(Constants::ITEMS_PER_LIST);
 
         } catch (Exception $ex) {
             return null;

@@ -5,6 +5,7 @@ namespace App\Sdc\Repositories;
 use App\Beacon;
 use App\Campaign;
 use App\Client;
+use App\Sdc\Utilities\Constants;
 use App\Sdc\Utilities\CustomLog;
 use Exception;
 

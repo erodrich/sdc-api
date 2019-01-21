@@ -6,6 +6,8 @@ use App\Ad;
 use App\Campaign;
 use App\Client;
 use App\Sdc\Utilities\CustomLog;
+use App\Sdc\Utilities\Constants;
+
 
 class AdRepositoryImpl implements AdRepositoryInterface
 {
@@ -65,13 +67,13 @@ class AdRepositoryImpl implements AdRepositoryInterface
         $campaign = Campaign::find($data['campaign_id']);
         try {
             if ($campaign) {
-                if ($data['image_pre']) {
+                if (array_key_exists('image_pre', $data) && $data['image_pre']) {
                     $image_pre = $this->ad->uploadImage($data, 'image_pre');
                     $this->ad->image_pre_name = $image_pre ? $image_pre['name'] : null;
                     $this->ad->image_pre_url = $image_pre ? $image_pre['url'] : null;
                     $this->ad->image_pre_public_id = $image_pre ? $image_pre['public_id'] : null;
                 }
-                if ($data['image_full']) {
+                if (array_key_exists('image_full', $data) && $data['image_full']) {
                     $image_full = $this->ad->uploadImage($data, 'image_full');
                     $this->ad->image_full_name = $image_full ? $image_full['name'] : null;
                     $this->ad->image_full_url = $image_full ? $image_full['url'] : null;

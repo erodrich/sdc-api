@@ -3,6 +3,7 @@
 namespace App\Sdc\Repositories;
 
 use App\Interaction;
+use App\Sdc\Utilities\Constants;
 use App\Sdc\Utilities\CustomLog;
 use Exception;
 use Illuminate\Support\Facades\DB;

@@ -26,7 +26,8 @@ class Ad extends Model
             $file = \Illuminate\Http\UploadedFile::createFromBase($request[$image_type]);
             $result['name'] = $file->getClientOriginalName();
             $image = $file->getRealPath();
-            Cloudder::upload($image, null);
+
+            Cloudder::upload($image, null, $options = array("folder" => env('CLOUDINARY_SUB_FOLDER')));
             list($width, $height) = getimagesize($image);
             $result['public_id'] = Cloudder::getPublicId();
             $result['url'] = Cloudder::show(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);

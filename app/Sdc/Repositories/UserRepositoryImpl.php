@@ -25,4 +25,14 @@ class UserRepositoryImpl implements UserRepositoryInterface
         $this->user->password = Hash::make($data['password']);
         $this->user->save();
     }
+
+    public function update(array $data, int $id)
+    {
+        // TODO: Implement update() method.
+    }
+
+    public function delete(int $id)
+    {
+        // TODO: Implement delete() method.
+    }
 }

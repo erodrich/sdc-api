@@ -65,6 +65,7 @@ class AppBusiness
         $response = null;
         try {
             $client = $this->clientDao->retrieveById($client_id);
+
             if ($client) {
                 $response = new Overview();
                 $response->client_id = $client->id;
@@ -73,9 +74,7 @@ class AppBusiness
                     $response->total_campaigns = $campaigns->count();
                     $response->active_campaigns = $campaigns->where('active', '=', '1')->count();
                     if($response->total_campaigns > 0){
-                        for ($i = 0; $i < $response->total_campaigns; $i++) {
-                            $innerCampaigns = $campaigns->get();
-                            $campaign = $innerCampaigns[$i];
+                        foreach($campaigns as $campaign){
                             $response->total_ads += $campaign->ads()->count();
                         }
                     }

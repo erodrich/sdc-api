@@ -19,8 +19,9 @@ class UsersTableSeeder extends Seeder
 			'name' => 'admin',
 			'email' => 'admin@sdc-api.com',
 			'password' => $password,
-			'client_id' => App\Client::find(rand(1,10))->id,
+			'client_id' => App\Client::where('name','=','SDC Company')->first()->id,
 		]);
+		/*
 		App\User::create([
 			'name' => 'erodrich',
 			'email' => 'erodrich@sdc-api.com',
@@ -36,5 +37,6 @@ class UsersTableSeeder extends Seeder
 				'client_id' => App\Client::find(rand(1,10))->id,
 			]);
 		}
+		 */
     }
 }

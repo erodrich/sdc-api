@@ -49,7 +49,6 @@ class BeaconController extends Controller
     public function store(Request $request)
     {
         $metodo = "store";
-
         $validator = Validator::make($request->all(), [
             'hw_id' => 'required',
             'alias' => 'required',

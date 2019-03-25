@@ -32,15 +32,18 @@ class InteractionRepositoryImpl implements InteractionRepositoryInterface
     }
 
     public function retrieveByParams(int $client_id, array $params){
+        $metodo = "retrieveByParams";
         try{
             //$interactions = DB::table('interactions')->where('client_id','=',$client_id);
             $interactions = $this->interaction->where('client_id', '=', $client_id);
-            if($interactions){
+            if($interactions && $params){
+                $where_statement = array();
                 foreach($params as $key=>$value){
-                    $interactions->where($key, '=', $value );
+                    array_push($where_statement, [$key, '=', $value]);
+                    //$interactions->where($key, '=', $value );
                 }
+                $interactions->where($where_statement);
             }
-
             return $interactions->paginate(Constants::ITEMS_PER_LIST);
 
         } catch (Exception $ex) {

@@ -21,7 +21,7 @@ class BeaconRepositoryImpl implements BeaconRepositoryInterface
 
     public function retrieveAll()
     {
-        return $this->beacon->all()->paginate(Constants::ITEMS_PER_LIST);
+        return $this->beacon->orderBy('id','desc')->paginate(Constants::ITEMS_PER_LIST);
     }
 
     public function retrieveById(int $id)

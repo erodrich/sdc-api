@@ -9,3 +9,4 @@ $factory->define(App\Client::class, function (Faker $faker) {
         'description' => $faker->sentence(20),
     ];
 });
+

@@ -50,5 +50,9 @@ class InteractionBusiness
         return $this->interactionDao->retrieveByParams($client_id, $data);
     }
 
+    public function retrieveByClient(int $client_id){
+        return $this->interactionDao->retrieveByClient($client_id);
+    }
+
 
 }

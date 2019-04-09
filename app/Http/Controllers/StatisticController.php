@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\InteractionsResource;
 use App\Sdc\Business\InteractionBusiness;
 use App\Sdc\Repositories\InteractionRepositoryInterface;
 use App\Sdc\Responses\ErrorServerResponse;
@@ -36,5 +37,15 @@ class StatisticController extends Controller
 
     public function index(){
         return response()->json(\App\Statistic::all());
+    }
+
+    public function getInteractions($client)
+    {
+        $metodo = "getInteractions";
+        $interactions = $this->interactionBusiness->retrieveByClient($client);
+
+        CustomLog::debug($this->class, $metodo, json_encode($interactions));
+        return new InteractionsResource($interactions);
+
     }
 }

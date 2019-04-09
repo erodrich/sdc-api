@@ -9,12 +9,13 @@ use Illuminate\Http\Request;
 |
 | Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| is assigned the "api" middleware group. Enjoy building your API! getInteractions
 |
  */
 Route::get('getad/{id}', 'AppController@deliverAd');
 Route::get('statistics/client/{client_id}/overview','AppController@overview');
 Route::get('statistics/client/{client_id}/search','AppController@search');
+Route::get('statistics/client/{client_id}/interactions','StatisticController@getInteractions');
 Route::post('statistics', 'StatisticController@store');
 //Route::get('statistics', 'StatisticController@index');
 

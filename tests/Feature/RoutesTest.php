@@ -35,7 +35,7 @@ class RoutesTest extends TestCase
         $response = $this->get('/api/beacons');
 
         //$response->assertStatus(200);
-        $response->dump();
+        //$response->dump();
         $response->assertJsonStructure();
     }
 
@@ -47,7 +47,7 @@ class RoutesTest extends TestCase
         $response = $this->get('/api/clients/8/campaigns');
 
         //$response->assertStatus(200);
-        $response->dump();
+        //$response->dump();
         $response->assertJsonStructure();
     }
 

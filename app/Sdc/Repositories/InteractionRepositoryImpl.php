@@ -28,7 +28,19 @@ class InteractionRepositoryImpl implements InteractionRepositoryInterface
         } catch (Exception $ex) {
             return null;
         }
+    }
 
+    public function retrieveByClient(int $client_id){
+        $metodo = "retrieveByClient";
+        try{
+
+            $interactions = $this->interaction->where('client_id', '=', $client_id);
+
+            return $interactions->orderBy('created_at','desc')->paginate(Constants::ITEMS_PER_LIST);
+
+        } catch (Exception $ex) {
+            return null;
+        }
     }
 
     public function retrieveByParams(int $client_id, array $params){
@@ -109,4 +121,6 @@ class InteractionRepositoryImpl implements InteractionRepositoryInterface
         }
         return false;
     }
+
+
 }

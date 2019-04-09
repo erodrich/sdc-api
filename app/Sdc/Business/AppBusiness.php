@@ -99,7 +99,7 @@ class AppBusiness
 
         try{
             $interactions = $this->interactionBusiness->retrieveByParams($client_id, $params_array);
-
+/*
             if($interactions){
 
                 $current_page = $interactions->currentPage();
@@ -128,8 +128,10 @@ class AppBusiness
                 $response['meta'] = $meta;
             }
             CustomLog::debug($this->class, $metodo, json_encode($response));
-            dd(Collection::make($response));
+            //dd(Collection::make($response));
             return Collection::make($response);
+*/
+            return $interactions;
 
         } catch (Exception $ex){
             CustomLog::error($this->class, $metodo, $ex->getMessage());

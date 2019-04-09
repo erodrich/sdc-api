@@ -38,10 +38,12 @@ class AppBusiness
         $response = new DeliveredData();
         $beacon = Beacon::where('hw_id', '=', $id)->first();
         if ($beacon->campaign()->first()) {
+            $campaign = $beacon->campaign()->first();
             try {
                 /* Logica para conseguir el anuncio a mostrar */
-                if ($beacon->campaign()->first()->ads()->first()) {
-                    $ad = $beacon->campaign()->first()->ads()->first();
+                if ($campaign->ads()->count() > 0) {
+                    $ads = $campaign->ads()->get();
+                    $ad = $ads->random(1);
                 }
 
                 $response->client_id = $beacon->client_id;

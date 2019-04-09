@@ -43,7 +43,7 @@ class CampaignTest extends TestCase
     {
         $campaignList = $this->campaignBusiness->retrieveAll();
         $campaignsResource = new CampaignsResource($campaignList);
-        echo(json_encode($campaignsResource));
+        // echo(json_encode($campaignsResource));
         $this->assertNotEmpty($campaignList);
     }
 }

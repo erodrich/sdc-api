@@ -31,7 +31,7 @@ class ClientTest extends TestCase
     {
         $clients = $this->clientBusiness->retrieveAll();
         $clientsResource = new ClientsResource($clients);
-        echo(json_encode($clientsResource));
+        //echo(json_encode($clientsResource));
         $this->assertTrue(true);
     }
 }

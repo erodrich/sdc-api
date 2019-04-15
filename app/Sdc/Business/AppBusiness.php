@@ -13,6 +13,7 @@ use App\DeliveredData;
 use App\Overview;
 use App\Sdc\Repositories\ClientRepositoryInterface;
 use App\Sdc\Repositories\InteractionRepositoryInterface;
+use App\Sdc\Utilities\Constants;
 use App\Sdc\Utilities\CustomLog;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -37,10 +38,12 @@ class AppBusiness
         $response = new DeliveredData();
         $beacon = Beacon::where('hw_id', '=', $id)->first();
         if ($beacon->campaign()->first()) {
+            $campaign = $beacon->campaign()->first();
             try {
                 /* Logica para conseguir el anuncio a mostrar */
-                if ($beacon->campaign()->first()->ads()->first()) {
-                    $ad = $beacon->campaign()->first()->ads()->first();
+                if ($campaign->ads()->count() > 0) {
+                    $ads = $campaign->ads()->get();
+                    $ad = $ads->random(1);
                 }
 
                 $response->client_id = $beacon->client_id;
@@ -95,10 +98,20 @@ class AppBusiness
 
         $response = array();
 
+
         try{
             $interactions = $this->interactionBusiness->retrieveByParams($client_id, $params_array);
-
+/*
             if($interactions){
+
+                $current_page = $interactions->currentPage();
+                $last_page = $interactions->lastPage();
+                $next_page_url = $interactions->nextPageUrl();
+                $prev_page_url = $interactions->previousPageUrl();
+
+                $data = array();
+                $links = array('next' => $next_page_url, 'prev' => $prev_page_url);
+                $meta = array('current_page' => $current_page, 'last_page' => $last_page);
 
                 foreach($interactions as $interaction){
                     $deliveredData = new DeliveredData();
@@ -109,12 +122,18 @@ class AppBusiness
                     $deliveredData['client_id'] = $interaction->client_id;
                     $deliveredData['action'] = $interaction->action;
                     $deliveredData['fecha_hora'] = $interaction->fecha_hora;
-                    array_push($response, $deliveredData);
+                    array_push($data, $deliveredData);
                 }
 
+                $response['data'] = $data;
+                $response['links'] = $links;
+                $response['meta'] = $meta;
             }
-
+            CustomLog::debug($this->class, $metodo, json_encode($response));
+            //dd(Collection::make($response));
             return Collection::make($response);
+*/
+            return $interactions;
 
         } catch (Exception $ex){
             CustomLog::error($this->class, $metodo, $ex->getMessage());

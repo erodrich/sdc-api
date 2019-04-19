@@ -14,7 +14,7 @@ class Constants
     const RESPONSE_SERVER_ERROR = "Internal Server Error";
     const CODE_SERVER_ERROR = 500;
     const ITEMS_PER_LIST = 10;
-    const NOTIFICADO = 'NOTIFICADO';
+    const NOTIFICADO = 'RECIBIDO';
     const VISTO = 'VISTO';
 
 

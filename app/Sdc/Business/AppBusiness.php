@@ -17,6 +17,7 @@ use App\Sdc\Utilities\Constants;
 use App\Sdc\Utilities\CustomLog;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class AppBusiness
 {
@@ -70,19 +71,37 @@ class AppBusiness
             $client = $this->clientDao->retrieveById($client_id);
 
             if ($client) {
+                CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Nombre: [".$client->name."]");
                 $response = new Overview();
                 $response->client_id = $client->id;
-                $campaigns = $client->campaigns();
+                $campaigns = $client->campaigns()->get();
                 if ($campaigns) {
                     $response->total_campaigns = $campaigns->count();
+                    CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Total Campañas: [".$response->total_campaigns."]");
                     $response->active_campaigns = $campaigns->where('active', '=', '1')->count();
                     if($response->total_campaigns > 0){
                         foreach($campaigns as $campaign){
                             $response->total_ads += $campaign->ads()->count();
                         }
+                        CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Total Anuncios: [".$response->total_ads."]");
                     }
 
                 }
+
+                $total_notificados = DB::table('interactions')
+                    ->where('client_id', '=' , $client->id)
+                    ->where('action', '=', Constants::NOTIFICADO)
+                    ->distinct('ad_id')
+                    ->count('ad_id');
+                CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Anuncios Notificados: [".$total_notificados."]");
+                $total_vistos = DB::table('interactions')
+                    ->where('client_id', '=' , $client->id)
+                    ->where('action', '=', Constants::VISTO)
+                    ->distinct('ad_id')
+                    ->count('ad_id');
+                CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Anuncios Vistos: [".$total_vistos."]");
+                $response->notified_ads = $total_notificados;
+                $response->viewed_ads = $total_vistos;
                 return $response;
             }
         } catch (Exception $ex) {
@@ -96,43 +115,9 @@ class AppBusiness
     {
         $metodo = 'search';
 
-        $response = array();
-
-
         try{
             $interactions = $this->interactionBusiness->retrieveByParams($client_id, $params_array);
-/*
-            if($interactions){
 
-                $current_page = $interactions->currentPage();
-                $last_page = $interactions->lastPage();
-                $next_page_url = $interactions->nextPageUrl();
-                $prev_page_url = $interactions->previousPageUrl();
-
-                $data = array();
-                $links = array('next' => $next_page_url, 'prev' => $prev_page_url);
-                $meta = array('current_page' => $current_page, 'last_page' => $last_page);
-
-                foreach($interactions as $interaction){
-                    $deliveredData = new DeliveredData();
-                    $deliveredData['id'] = $interaction->id;
-                    $deliveredData['campaign'] = $interaction->campaign()->first();
-                    $deliveredData['ad'] = $interaction->ad()->first();
-                    $deliveredData['beacon'] = $interaction->beacon()->first();
-                    $deliveredData['client_id'] = $interaction->client_id;
-                    $deliveredData['action'] = $interaction->action;
-                    $deliveredData['fecha_hora'] = $interaction->fecha_hora;
-                    array_push($data, $deliveredData);
-                }
-
-                $response['data'] = $data;
-                $response['links'] = $links;
-                $response['meta'] = $meta;
-            }
-            CustomLog::debug($this->class, $metodo, json_encode($response));
-            //dd(Collection::make($response));
-            return Collection::make($response);
-*/
             return $interactions;
 
         } catch (Exception $ex){

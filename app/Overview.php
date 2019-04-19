@@ -12,6 +12,6 @@ class Overview extends Model
         'active_campaigns' => 0,
         'total_ads' => 0,
         'viewed_ads' => 0,
-        'emitted_reports' => 0,
+        'notified_ads' => 0,
     ];
 }

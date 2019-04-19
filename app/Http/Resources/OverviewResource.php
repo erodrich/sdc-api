@@ -21,6 +21,8 @@ class OverviewResource extends JsonResource
                 'total_campaigns' => $this->total_campaigns,
                 'active_campaigns' => $this->active_campaigns,
                 'total_ads' => $this->total_ads,
+                'notified_ads' => $this->notified_ads,
+                'viewed_ads' => $this->viewed_ads
             ],
             'links' => [
                 //'self' => route('clients.statistics', ['client' => $this->campaign->client_id, 'campaign' => $this->campaign_id, 'ad' => $this->id]),

@@ -88,20 +88,22 @@ class AppBusiness
 
                 }
 
-                $total_notificados = DB::table('interactions')
+                $notificados = DB::table('interactions')
                     ->where('client_id', '=' , $client->id)
                     ->where('action', '=', Constants::NOTIFICADO)
                     ->distinct('ad_id')
                     ->count('ad_id');
-                CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Anuncios Notificados: [".$total_notificados."]");
                 $total_vistos = DB::table('interactions')
                     ->where('client_id', '=' , $client->id)
                     ->where('action', '=', Constants::VISTO)
                     ->distinct('ad_id')
                     ->count('ad_id');
-                CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Anuncios Vistos: [".$total_vistos."]");
-                $response->notified_ads = $total_notificados;
+                $response->notified_ads = $notificados - $total_vistos;
                 $response->viewed_ads = $total_vistos;
+                CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Anuncios Notificados: [".$response->notified_ads."]");
+                CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Anuncios Vistos: [".$response->viewed_ads."]");
+                CustomLog::debug($this->class, $metodo, "Cliente ID: ".$client->id." :: Anuncios Vistos: [".$response->total_ads."]");
+
                 return $response;
             }
         } catch (Exception $ex) {
